@@ -41,11 +41,6 @@ public class EventFetchTask extends AsyncTask<Void, Void, Void> {
             mActivity.showGooglePlayServicesAvailabilityErrorDialog(
                     availabilityException.getConnectionStatusCode());
 
-        } catch (UserRecoverableAuthIOException userRecoverableException) {
-            mActivity.startActivityForResult(
-                    userRecoverableException.getIntent(),
-                    UpcomingEventsActivity.REQUEST_AUTHORIZATION);
-
         } catch (IOException e) {
             mActivity.updateStatus("The following error occurred: " +
                     e.getMessage());
@@ -62,7 +57,8 @@ public class EventFetchTask extends AsyncTask<Void, Void, Void> {
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         List<String> eventStrings = new ArrayList<String>();
-        Events events = mActivity.mService.events().list("primary")
+
+        Events events = mActivity.mService.events().list(mActivity.getResources().getString(R.string.laboTuring))
                 .setMaxResults(10)
                 .setTimeMin(now)
                 .setOrderBy("startTime")

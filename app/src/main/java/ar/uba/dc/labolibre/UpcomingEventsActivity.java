@@ -85,6 +85,7 @@ public class UpcomingEventsActivity extends Activity {
 
         // Initialize credentials and calendar service.
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+
         credential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff())
