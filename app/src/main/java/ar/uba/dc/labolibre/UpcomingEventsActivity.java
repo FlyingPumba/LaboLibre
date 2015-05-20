@@ -95,21 +95,8 @@ public class UpcomingEventsActivity extends Activity {
                 transport, jsonFactory, credential)
                 .setApplicationName("Calendar API Android Quickstart")
                 .build();
-    }
 
-    /**
-     * Called whenever this activity is pushed to the foreground, such as after
-     * a call to onCreate().
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (isGooglePlayServicesAvailable()) {
-            refreshEventList();
-        } else {
-            mStatusText.setText("Google Play Services required: " +
-                    "after installing, close and relaunch this app.");
-        }
+        refreshEventList();
     }
 
     /**

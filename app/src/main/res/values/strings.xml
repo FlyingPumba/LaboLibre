@@ -15,11 +15,19 @@
     <string name="client_id">749012502551-8466730mihilmlr6hosf4p3ah46r168a.apps.googleusercontent.com</string>
     <string name="client_secret">{"installed":{"auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","client_email":"","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","oob"],"client_x509_cert_url":"","client_id":"749012502551-8466730mihilmlr6hosf4p3ah46r168a.apps.googleusercontent.com","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs"}}</string>
 
-    <string name="labo1">dbmc63l0l8e3ga4o0gnv4774co@group.calendar.google.com</string>
-    <string name="labo2">lvi87p49t3v40rog28inb0rqv4@group.calendar.google.com</string>
-    <string name="labo3">uv7ipmm1plrko1s079qeq94rt8@group.calendar.google.com</string>
-    <string name="labo4">9l7d3nd4iugar2apq22qpng7vg@group.calendar.google.com</string>
-    <string name="labo5">r011hms61uo5rdnpu17lcg4gss@group.calendar.google.com</string>
-    <string name="labo6">1v8th9oib37s7hfnghop6vqmgg@group.calendar.google.com</string>
-    <string name="laboTuring">oi16fo4digt6aqlr9dc9415bc8@group.calendar.google.com</string>
+    <string name="labo1_cid">dbmc63l0l8e3ga4o0gnv4774co@group.calendar.google.com</string>
+    <string name="labo2_cid">lvi87p49t3v40rog28inb0rqv4@group.calendar.google.com</string>
+    <string name="labo3_cid">uv7ipmm1plrko1s079qeq94rt8@group.calendar.google.com</string>
+    <string name="labo4_cid">9l7d3nd4iugar2apq22qpng7vg@group.calendar.google.com</string>
+    <string name="labo5_cid">r011hms61uo5rdnpu17lcg4gss@group.calendar.google.com</string>
+    <string name="labo6_cid">1v8th9oib37s7hfnghop6vqmgg@group.calendar.google.com</string>
+    <string name="laboTuring_cid">oi16fo4digt6aqlr9dc9415bc8@group.calendar.google.com</string>
+
+    <string name="labo1_name">Labo 1</string>
+    <string name="labo2_name">Labo 2</string>
+    <string name="labo3_name">Labo 3</string>
+    <string name="labo4_name">Labo 4</string>
+    <string name="labo5_name">Labo 5</string>
+    <string name="labo6_name">Labo 6</string>
+    <string name="laboTuring_name">Labo Turing</string>
 </resources>

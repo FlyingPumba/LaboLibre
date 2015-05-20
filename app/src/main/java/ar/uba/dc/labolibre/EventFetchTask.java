@@ -9,7 +9,10 @@ import com.google.api.services.calendar.model.Events;
 import com.google.api.services.calendar.model.Event;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +43,10 @@ public class EventFetchTask extends AsyncTask<Void, Void, Void> {
         } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
             mActivity.showGooglePlayServicesAvailabilityErrorDialog(
                     availabilityException.getConnectionStatusCode());
-
+        } catch (UserRecoverableAuthIOException userRecoverableException) {
+            mActivity.startActivityForResult(
+                    userRecoverableException.getIntent(),
+                    UpcomingEventsActivity.REQUEST_AUTHORIZATION);
         } catch (IOException e) {
             mActivity.updateStatus("The following error occurred: " +
                     e.getMessage());
@@ -54,19 +60,42 @@ public class EventFetchTask extends AsyncTask<Void, Void, Void> {
      * @throws IOException
      */
     private List<String> fetchEventsFromCalendar() throws IOException {
-        // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         List<String> eventStrings = new ArrayList<String>();
 
-        Events events = mActivity.mService.events().list(mActivity.getResources().getString(R.string.laboTuring))
-                .setMaxResults(10)
-                .setTimeMin(now)
+        Events events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo1_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo1_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo2_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo2_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo3_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo3_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo4_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo4_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo5_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo5_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.labo6_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.labo6_name), events.getItems()));
+        events = getEventsFromCalendar(now, mActivity.getResources().getString(R.string.laboTuring_cid));
+        eventStrings.addAll(parseEvents(mActivity.getResources().getString(R.string.laboTuring_name), events.getItems()));
+
+
+        return eventStrings;
+    }
+
+    private Events getEventsFromCalendar(DateTime date, String cid) throws IOException  {
+        // List the next 20 events from the calendar.
+        Events events = mActivity.mService.events().list(cid)
+                .setMaxResults(20)
+                .setTimeMin(date)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
-        List<Event> items = events.getItems();
+        return events;
+    }
 
-        for (Event event : items) {
+    private List<String> parseEvents(String calendarName, List<Event> events) {
+        List<String> eventStrings = new ArrayList<String>();
+        for (Event event : events) {
             DateTime start = event.getStart().getDateTime();
             if (start == null) {
                 // All-day events don't have start times, so just use
@@ -74,9 +103,8 @@ public class EventFetchTask extends AsyncTask<Void, Void, Void> {
                 start = event.getStart().getDate();
             }
             eventStrings.add(
-                    String.format("%s (%s)", event.getSummary(), start));
+                    String.format("%s (%s): %s", calendarName, start.toString(), event.getSummary()));
         }
         return eventStrings;
     }
-
 }
