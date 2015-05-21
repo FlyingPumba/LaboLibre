@@ -75,7 +75,8 @@ public class CalendarEvents implements EventFetchTask.EventFetchResponseListener
                         Calendar end = Calendar.getInstance();
                         end.setTimeInMillis(e.getEnd().getDateTime().getValue());
 
-                        String eventName = name + " - " + e.getSummary();
+                        //String eventName = name + " - " + e.getSummary();
+                        String eventName = e.getSummary();
 
                         WeekViewEvent event = new WeekViewEvent(rnd.nextInt(10000), eventName, start, end);
                         event.setColor(color);

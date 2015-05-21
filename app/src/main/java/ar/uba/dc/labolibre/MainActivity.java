@@ -85,6 +85,7 @@ public class MainActivity extends ActionBarActivity
         mCalendarView = (WeekView)findViewById(R.id.calendarView);
         mCalendarView.setMonthChangeListener(this);
 
+
         // Initialize credentials and calendar service.
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
 
@@ -100,6 +101,7 @@ public class MainActivity extends ActionBarActivity
         currentMonthTime.clear();
         currentMonthTime.set(aux.get(Calendar.YEAR), aux.get(Calendar.MONTH), 1);
         currentMonthTime.getTime(); // needed to repopulate values
+        //mCalendarView.goToHour(currentMonthTime.get(Calendar.HOUR_OF_DAY));
 
         // prepare calendars info
         initCalendarsInfo();
