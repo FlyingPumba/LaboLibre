@@ -31,7 +31,9 @@ import com.google.api.services.calendar.CalendarScopes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEvents.NewEventsListener {
@@ -60,11 +62,8 @@ public class MainActivity extends ActionBarActivity
     // cache of monthly events
     CalendarEvents calendarEvents;
     Calendar currentMonthTime;
-    Calendar prevMonthTime;
-    Calendar nextMonthTime;
-    private List<WeekViewEvent> prevMonth = new ArrayList<WeekViewEvent>();
-    private List<WeekViewEvent> currentMonth = new ArrayList<WeekViewEvent>();
-    private List<WeekViewEvent> nextMonth = new ArrayList<WeekViewEvent>();
+    private Map<String, List<WeekViewEvent>> cachedMonthEvents = new HashMap<>();
+    private List<String> monthEventsBeingFetched;
     private List<String> cids;
     private List<String> cnames;
     private List<Integer> ccolors;
@@ -105,8 +104,9 @@ public class MainActivity extends ActionBarActivity
         // prepare calendars info
         initCalendarsInfo();
 
-        // Populate initial events
-        populateEvents();
+        // Populate initial 3 months
+        populateInitialEvents(currentMonthTime);
+        populateEvents(currentMonthTime);
     }
 
     private void initCalendarsInfo() {
@@ -141,37 +141,43 @@ public class MainActivity extends ActionBarActivity
         ccolors.add(getResources().getColor(R.color.md_indigo_400));
     }
 
-    private void populateEvents() {
+    private void populateInitialEvents(Calendar time) {
         // fetch events for this month, the previous one and the next one
-        prevMonthTime = Calendar.getInstance();
-        nextMonthTime = Calendar.getInstance();
-        prevMonthTime.setTime(currentMonthTime.getTime());
-        nextMonthTime.setTime(currentMonthTime.getTime());
-        if (currentMonthTime.get(Calendar.MONTH) == Calendar.JANUARY) {
+        Calendar prevMonthTime = Calendar.getInstance();
+        Calendar nextMonthTime = Calendar.getInstance();
+        prevMonthTime.setTime(time.getTime());
+        nextMonthTime.setTime(time.getTime());
+        if (time.get(Calendar.MONTH) == Calendar.JANUARY) {
             prevMonthTime.set(Calendar.MONTH, Calendar.DECEMBER);
-            prevMonthTime.set(Calendar.YEAR, currentMonthTime.get(Calendar.YEAR) - 1);
+            prevMonthTime.set(Calendar.YEAR, time.get(Calendar.YEAR) - 1);
             nextMonthTime.set(Calendar.MONTH, Calendar.FEBRUARY);
-        } else if (currentMonthTime.get(Calendar.MONTH) == Calendar.DECEMBER) {
+        } else if (time.get(Calendar.MONTH) == Calendar.DECEMBER) {
             prevMonthTime.set(Calendar.MONTH, Calendar.NOVEMBER);
             nextMonthTime.set(Calendar.MONTH, Calendar.JANUARY);
-            nextMonthTime.set(Calendar.YEAR, currentMonthTime.get(Calendar.YEAR) + 1);
+            nextMonthTime.set(Calendar.YEAR, time.get(Calendar.YEAR) + 1);
         } else {
-            prevMonthTime.set(Calendar.MONTH, currentMonthTime.get(Calendar.MONTH) - 1);
-            nextMonthTime.set(Calendar.MONTH, currentMonthTime.get(Calendar.MONTH) + 1);
+            prevMonthTime.set(Calendar.MONTH, time.get(Calendar.MONTH) - 1);
+            nextMonthTime.set(Calendar.MONTH, time.get(Calendar.MONTH) + 1);
         }
 
         prevMonthTime.getTime(); // needed to repopulate values
         nextMonthTime.getTime(); // needed to repopulate values
 
-        Calendar endTime = Calendar.getInstance();
-        endTime.setTime(nextMonthTime.getTime());
+        populateEvents(time);
+        populateEvents(nextMonthTime);
+        populateEvents(prevMonthTime);
+    }
 
-        // compute endTime
-        if (nextMonthTime.get(Calendar.MONTH) == Calendar.DECEMBER) {
+    private void populateEvents(Calendar time) {
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTime(time.getTime());
+
+        // compute endTime (one month)
+        if (time.get(Calendar.MONTH) == Calendar.DECEMBER) {
             endTime.set(Calendar.MONTH, Calendar.JANUARY);
-            endTime.set(Calendar.YEAR, nextMonthTime.get(Calendar.YEAR) + 1);
+            endTime.set(Calendar.YEAR, time.get(Calendar.YEAR) + 1);
         } else {
-            endTime.set(Calendar.MONTH, nextMonthTime.get(Calendar.MONTH) + 1);
+            endTime.set(Calendar.MONTH, time.get(Calendar.MONTH) + 1);
         }
         endTime.getTime(); // needed to repopulate values
 
@@ -181,7 +187,7 @@ public class MainActivity extends ActionBarActivity
         } else {
             if (isDeviceOnline()) {
                 calendarEvents = new CalendarEvents(this, credential);
-                calendarEvents.fetchEventsfromCalendars(cids, cnames, ccolors, prevMonthTime, endTime);
+                calendarEvents.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
             } else {
                 // yield: no connection
             }
@@ -205,7 +211,7 @@ public class MainActivity extends ActionBarActivity
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode == RESULT_OK) {
-                    populateEvents();
+                    populateEvents(currentMonthTime);
                 } else {
                     isGooglePlayServicesAvailable();
                 }
@@ -222,7 +228,7 @@ public class MainActivity extends ActionBarActivity
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
-                        populateEvents();
+                        populateEvents(currentMonthTime);
                     }
                 } else if (resultCode == RESULT_CANCELED) {
                     //mStatusText.setText("Account unspecified.");
@@ -230,7 +236,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    populateEvents();
+                    populateEvents(currentMonthTime);
                 } else {
                     chooseAccount();
                 }
@@ -300,35 +306,25 @@ public class MainActivity extends ActionBarActivity
             newMonth--; // gil el que hizo WeekView
         } else {
             initial3Months++;
-            return currentMonth;
+            return new ArrayList<WeekViewEvent>();
         }
 
-        //  devolver el newMonth, y pedir el mes siguiente y anterior a ese
-        if ((currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth + 1)
-                || (currentMonthTime.get(Calendar.YEAR) == newYear+1 && currentMonthTime.get(Calendar.MONTH) == Calendar.JANUARY)) {
-            // we moved to next month
-            currentMonthTime = nextMonthTime;
-            //populateEvents();
-            return nextMonth;
-        } else if ((currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth - 1)
-                || (currentMonthTime.get(Calendar.YEAR) == newYear-1 && currentMonthTime.get(Calendar.MONTH) == Calendar.DECEMBER)) {
-            // we moved to prev month
-            currentMonthTime = prevMonthTime;
-            //populateEvents();
-            return prevMonth;
-        } else if (currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth) {
-            // we are in current month
-            return currentMonth;
+        String key = getKey(newYear, newMonth);
 
+        if (cachedMonthEvents.containsKey(key)) {
+            // we already have the evetns in that month
+            return cachedMonthEvents.get(key);
+        } else if (monthEventsBeingFetched.contains(key)) {
+            // we already sent a fetch request for the events in that month
+            return new ArrayList<WeekViewEvent>();
         } else {
-            // completely different month to the cached ones
-            currentMonthTime.clear();
-            currentMonthTime.set(newYear, newMonth, 1);
-            currentMonthTime.getTime(); // needed to repopulate values
-            calendarEventsOutdated = true;
+            // we need to fetch the events
+            Calendar time = Calendar.getInstance();
+            time.set(newYear, newMonth, 1);
+            time.getTime(); // needed to repopulate values
 
-            // triger some kind of notification to the user, to inform that we are fetching the events
-            populateEvents();
+            calendarEventsOutdated = true;
+            populateEvents(time);
             return new ArrayList<WeekViewEvent>();
         }
     }
@@ -338,17 +334,24 @@ public class MainActivity extends ActionBarActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for(WeekViewEvent e : events) {
-                    if (e.getStartTime().before(currentMonthTime)) {
-                        // event from previous month
-                        prevMonth.add(e);
-                    } else if (e.getStartTime().after(nextMonthTime)) {
-                        // event from next month
-                        nextMonth.add(e);
-                    } else {
-                        // event from current month
-                        currentMonth.add(e);
+                List<WeekViewEvent> aux;
+                // all this events belong to one month, check first if we have an entry in the Map for this month
+                WeekViewEvent e = events.get(0);
+                int m = e.getStartTime().get(Calendar.MONTH);
+                int y = e.getStartTime().get(Calendar.YEAR);
+                String key = getKey(y, m);
+
+                if (cachedMonthEvents.containsKey(key)) {
+                    aux = cachedMonthEvents.get(key);
+                    for(WeekViewEvent event : events) {
+                        aux.add(event);
                     }
+                } else {
+                    aux = new ArrayList<WeekViewEvent>();
+                    for(WeekViewEvent event : events) {
+                        aux.add(event);
+                    }
+                    cachedMonthEvents.put(key, aux);
                 }
                 if (calendarEventsOutdated) {
                     mCalendarView.notifyDatasetChanged();
@@ -457,4 +460,7 @@ public class MainActivity extends ActionBarActivity
         });
     }
 
+    private String getKey(int year, int month) {
+        return year + "-" + month;
+    }
 }
