@@ -65,6 +65,9 @@ public class MainActivity extends ActionBarActivity
     private List<WeekViewEvent> prevMonth = new ArrayList<WeekViewEvent>();
     private List<WeekViewEvent> currentMonth = new ArrayList<WeekViewEvent>();
     private List<WeekViewEvent> nextMonth = new ArrayList<WeekViewEvent>();
+    private List<String> cids;
+    private List<String> cnames;
+    private List<Integer> ccolors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +102,43 @@ public class MainActivity extends ActionBarActivity
         currentMonthTime.set(aux.get(Calendar.YEAR), aux.get(Calendar.MONTH), 1);
         currentMonthTime.getTime(); // needed to repopulate values
 
+        // prepare calendars info
+        initCalendarsInfo();
+
         // Populate initial events
         populateEvents();
+    }
+
+    private void initCalendarsInfo() {
+        // prepare calendar ids
+        cids = new ArrayList<String>();
+        cids.add(getResources().getString(R.string.labo1_cid));
+        cids.add(getResources().getString(R.string.labo2_cid));
+        cids.add(getResources().getString(R.string.labo3_cid));
+        cids.add(getResources().getString(R.string.labo4_cid));
+        cids.add(getResources().getString(R.string.labo5_cid));
+        cids.add(getResources().getString(R.string.labo6_cid));
+        cids.add(getResources().getString(R.string.laboTuring_cid));
+
+        // prepare calendar names
+        cnames = new ArrayList<String>();
+        cnames.add(getResources().getString(R.string.labo1_name));
+        cnames.add(getResources().getString(R.string.labo2_name));
+        cnames.add(getResources().getString(R.string.labo3_name));
+        cnames.add(getResources().getString(R.string.labo4_name));
+        cnames.add(getResources().getString(R.string.labo5_name));
+        cnames.add(getResources().getString(R.string.labo6_name));
+        cnames.add(getResources().getString(R.string.laboTuring_name));
+
+        // prepare calendar colors
+        ccolors = new ArrayList<Integer>();
+        ccolors.add(getResources().getColor(R.color.md_light_blue_400));
+        ccolors.add(getResources().getColor(R.color.md_red_400));
+        ccolors.add(getResources().getColor(R.color.md_light_green_400));
+        ccolors.add(getResources().getColor(R.color.md_amber_400));
+        ccolors.add(getResources().getColor(R.color.md_purple_400));
+        ccolors.add(getResources().getColor(R.color.md_pink_400));
+        ccolors.add(getResources().getColor(R.color.md_indigo_400));
     }
 
     private void populateEvents() {
@@ -137,43 +175,13 @@ public class MainActivity extends ActionBarActivity
         }
         endTime.getTime(); // needed to repopulate values
 
-        // prepare calendar ids
-        List<String> cids = new ArrayList<String>();
-        cids.add(getResources().getString(R.string.labo1_cid));
-        cids.add(getResources().getString(R.string.labo2_cid));
-        cids.add(getResources().getString(R.string.labo3_cid));
-        cids.add(getResources().getString(R.string.labo4_cid));
-        cids.add(getResources().getString(R.string.labo5_cid));
-        cids.add(getResources().getString(R.string.labo6_cid));
-        cids.add(getResources().getString(R.string.laboTuring_cid));
-
-        // prepare calendar names
-        List<String> names = new ArrayList<String>();
-        names.add(getResources().getString(R.string.labo1_name));
-        names.add(getResources().getString(R.string.labo2_name));
-        names.add(getResources().getString(R.string.labo3_name));
-        names.add(getResources().getString(R.string.labo4_name));
-        names.add(getResources().getString(R.string.labo5_name));
-        names.add(getResources().getString(R.string.labo6_name));
-        names.add(getResources().getString(R.string.laboTuring_name));
-
-        // prepare calendar colors
-        List<Integer> colors = new ArrayList<Integer>();
-        colors.add(getResources().getColor(R.color.md_light_blue_400));
-        colors.add(getResources().getColor(R.color.md_red_400));
-        colors.add(getResources().getColor(R.color.md_light_green_400));
-        colors.add(getResources().getColor(R.color.md_amber_400));
-        colors.add(getResources().getColor(R.color.md_purple_400));
-        colors.add(getResources().getColor(R.color.md_pink_400));
-        colors.add(getResources().getColor(R.color.md_indigo_400));
-
         // fetch !
         if (credential.getSelectedAccountName() == null) {
             chooseAccount();
         } else {
             if (isDeviceOnline()) {
                 calendarEvents = new CalendarEvents(this, credential);
-                calendarEvents.fetchEventsfromCalendars(cids, names, colors, prevMonthTime, endTime);
+                calendarEvents.fetchEventsfromCalendars(cids, cnames, ccolors, prevMonthTime, endTime);
             } else {
                 // yield: no connection
             }
@@ -288,34 +296,28 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-        newMonth--; // gil el que hizo WeekView
+        if(initial3Months >= 3) {
+            newMonth--; // gil el que hizo WeekView
+        } else {
+            initial3Months++;
+            return currentMonth;
+        }
 
         //  devolver el newMonth, y pedir el mes siguiente y anterior a ese
         if ((currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth + 1)
                 || (currentMonthTime.get(Calendar.YEAR) == newYear+1 && currentMonthTime.get(Calendar.MONTH) == Calendar.JANUARY)) {
             // we moved to next month
-            if(initial3Months >= 3) {
-                currentMonthTime = nextMonthTime;
-                populateEvents();
-            } else {
-                initial3Months++;
-            }
+            currentMonthTime = nextMonthTime;
+            //populateEvents();
             return nextMonth;
         } else if ((currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth - 1)
                 || (currentMonthTime.get(Calendar.YEAR) == newYear-1 && currentMonthTime.get(Calendar.MONTH) == Calendar.DECEMBER)) {
             // we moved to prev month
-            if(initial3Months >= 3) {
-                currentMonthTime = prevMonthTime;
-                populateEvents();
-            } else {
-                initial3Months++;
-            }
+            currentMonthTime = prevMonthTime;
+            //populateEvents();
             return prevMonth;
         } else if (currentMonthTime.get(Calendar.YEAR) == newYear && currentMonthTime.get(Calendar.MONTH) == newMonth) {
             // we are in current month
-            if(initial3Months < 3) {
-                initial3Months++;
-            }
             return currentMonth;
 
         } else {

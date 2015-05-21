@@ -1,7 +1,5 @@
 package ar.uba.dc.labolibre;
 
-import android.app.Activity;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 
 import com.alamkanak.weekview.WeekViewEvent;
@@ -60,44 +58,33 @@ public class CalendarEvents implements EventFetchTask.EventFetchResponseListener
         task.execute(requests);
     }
 
-    private List<String> parseEvents(String calendarName, List<Event> events) {
-        List<String> eventStrings = new ArrayList<String>();
-        for (Event event : events) {
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                // All-day events don't have start times, so just use
-                // the start date.
-                start = event.getStart().getDate();
-            }
-            eventStrings.add(
-                    String.format("%s (%s): %s", calendarName, start.toString(), event.getSummary()));
-        }
-        return eventStrings;
-    }
-
-
     @Override
-    public void onFetchFinished(List<Events> events) {
-        List<WeekViewEvent> aux = new ArrayList<WeekViewEvent>();
-        Random rnd = new Random(42);
-        for (int i = 0; i < events.size(); i++) {
-            Events es = events.get(i);
-            String name = this.calendarNames.get(i);
-            Integer color = this.calendarColors.get(i);
-            for (Event e : es.getItems()) {
-                Calendar start = Calendar.getInstance();
-                start.setTimeInMillis(e.getStart().getDateTime().getValue());
-                Calendar end = Calendar.getInstance();
-                end.setTimeInMillis(e.getEnd().getDateTime().getValue());
+    public void onFetchFinished(final List<Events> events) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<WeekViewEvent> aux = new ArrayList<WeekViewEvent>();
+                Random rnd = new Random(42);
+                for (int i = 0; i < events.size(); i++) {
+                    Events es = events.get(i);
+                    String name = CalendarEvents.this.calendarNames.get(i);
+                    Integer color = CalendarEvents.this.calendarColors.get(i);
+                    for (Event e : es.getItems()) {
+                        Calendar start = Calendar.getInstance();
+                        start.setTimeInMillis(e.getStart().getDateTime().getValue());
+                        Calendar end = Calendar.getInstance();
+                        end.setTimeInMillis(e.getEnd().getDateTime().getValue());
 
-                String eventName = name + " - " + e.getSummary();
+                        String eventName = name + " - " + e.getSummary();
 
-                WeekViewEvent event = new WeekViewEvent(rnd.nextInt(10000), eventName, start, end);
-                event.setColor(color);
-                aux.add(event);
+                        WeekViewEvent event = new WeekViewEvent(rnd.nextInt(10000), eventName, start, end);
+                        event.setColor(color);
+                        aux.add(event);
+                    }
+                }
+                listener.onNewEvents(aux);
             }
-        }
-        listener.onNewEvents(aux);
+        }).run();
     }
 
     public interface NewEventsListener {
