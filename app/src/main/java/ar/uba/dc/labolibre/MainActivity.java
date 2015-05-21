@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity
     CalendarEvents calendarEvents;
     Calendar currentMonthTime;
     private Map<String, List<WeekViewEvent>> cachedMonthEvents = new HashMap<>();
-    private List<String> monthEventsBeingFetched;
+    private List<String> monthEventsBeingFetched = new ArrayList<>();
     private List<String> cids;
     private List<String> cnames;
     private List<Integer> ccolors;
@@ -187,6 +187,10 @@ public class MainActivity extends ActionBarActivity
         } else {
             if (isDeviceOnline()) {
                 calendarEvents = new CalendarEvents(this, credential);
+                // store current time as being fetched
+                String key = getKey(time.get(Calendar.YEAR), time.get(Calendar.MONTH));
+                monthEventsBeingFetched.add(key);
+
                 calendarEvents.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
             } else {
                 // yield: no connection
@@ -335,6 +339,7 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void run() {
                 List<WeekViewEvent> aux;
+
                 // all this events belong to one month, check first if we have an entry in the Map for this month
                 WeekViewEvent e = events.get(0);
                 int m = e.getStartTime().get(Calendar.MONTH);
@@ -353,6 +358,11 @@ public class MainActivity extends ActionBarActivity
                     }
                     cachedMonthEvents.put(key, aux);
                 }
+                // remove entry from beingFetched
+                if(monthEventsBeingFetched.contains(key)) {
+                    monthEventsBeingFetched.remove(key);
+                }
+
                 if (calendarEventsOutdated) {
                     mCalendarView.notifyDatasetChanged();
                     calendarEventsOutdated = false;
