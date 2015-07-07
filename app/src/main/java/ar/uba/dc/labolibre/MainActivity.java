@@ -343,6 +343,9 @@ public class MainActivity extends ActionBarActivity
                 List<WeekViewEvent> aux;
 
                 // all this events belong to one month, check first if we have an entry in the Map for this month
+                if (events.size() == 0) {
+                    return;
+                }
                 WeekViewEvent e = events.get(0);
                 int m = e.getStartTime().get(Calendar.MONTH);
                 int y = e.getStartTime().get(Calendar.YEAR);
