@@ -35,4 +35,7 @@ dependencies {
     compile 'com.github.alamkanak:android-week-view:1.2.3'
     // material colors
     compile 'com.wada811:android-material-design-colors:2.0.0'
+    // snappy DB: NoSQL
+    compile 'com.snappydb:snappydb-lib:0.5.2'
+    compile 'com.esotericsoftware.kryo:kryo:2.24.0'
 }
