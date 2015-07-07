@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
-public class CalendarEvents implements EventFetchTask.EventFetchResponseListener {
+public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseListener {
 
     private NewEventsListener listener;
     private List<String> calendarNames;
@@ -33,7 +33,7 @@ public class CalendarEvents implements EventFetchTask.EventFetchResponseListener
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     private List<Integer> calendarColors;
 
-    public CalendarEvents(@NonNull NewEventsListener listener, GoogleAccountCredential credential) {
+    public CalendarEventsFetcher(@NonNull NewEventsListener listener, GoogleAccountCredential credential) {
         this.listener = listener;
         mService = new com.google.api.services.calendar.Calendar.Builder(
                 transport, jsonFactory, credential)
@@ -67,8 +67,8 @@ public class CalendarEvents implements EventFetchTask.EventFetchResponseListener
                 Random rnd = new Random(42);
                 for (int i = 0; i < events.size(); i++) {
                     Events es = events.get(i);
-                    String name = CalendarEvents.this.calendarNames.get(i);
-                    Integer color = CalendarEvents.this.calendarColors.get(i);
+                    String name = CalendarEventsFetcher.this.calendarNames.get(i);
+                    Integer color = CalendarEventsFetcher.this.calendarColors.get(i);
                     for (Event e : es.getItems()) {
                         Calendar start = Calendar.getInstance();
                         start.setTimeInMillis(e.getStart().getDateTime().getValue());

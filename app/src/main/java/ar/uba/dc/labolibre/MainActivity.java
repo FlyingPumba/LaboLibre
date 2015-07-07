@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEvents.NewEventsListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsFetcher.NewEventsListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -60,7 +59,7 @@ public class MainActivity extends ActionBarActivity
     private int initial3Months = 0;
 
     // cache of monthly events
-    CalendarEvents calendarEvents;
+    CalendarEventsFetcher calendarEventsFetcher;
     Calendar currentMonthTime;
     private Map<String, List<WeekViewEvent>> cachedMonthEvents = new HashMap<>();
     private List<String> monthEventsBeingFetched = new ArrayList<>();
@@ -190,12 +189,12 @@ public class MainActivity extends ActionBarActivity
             chooseAccount();
         } else {
             if (isDeviceOnline()) {
-                calendarEvents = new CalendarEvents(this, credential);
+                calendarEventsFetcher = new CalendarEventsFetcher(this, credential);
                 // store current time as being fetched
                 String key = getKey(time.get(Calendar.YEAR), time.get(Calendar.MONTH));
                 monthEventsBeingFetched.add(key);
 
-                calendarEvents.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
+                calendarEventsFetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
             } else {
                 // yield: no connection
             }
