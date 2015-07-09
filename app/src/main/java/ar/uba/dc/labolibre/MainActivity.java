@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
@@ -14,13 +15,16 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.util.Calendar;
 import java.util.List;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsFetcher.NewEventsListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsFetcher.EventsFetcherListener, CalendarEventsManager.EventsManagerListener {
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
 
     private WeekView mCalendarView;
+    private SmoothProgressBar progressBar;
 
     Calendar currentMonthTime;
     CalendarEventsManager eventsManager;
@@ -62,6 +66,9 @@ public class MainActivity extends AppCompatActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        progressBar = (SmoothProgressBar)findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         mCalendarView = (WeekView)findViewById(R.id.calendarView);
         mCalendarView.setMonthChangeListener(this);
@@ -168,5 +175,15 @@ public class MainActivity extends AppCompatActivity
                 mCalendarView.notifyDatasetChanged();
             }
         });
+    }
+
+    @Override
+    public void onDownloadStarted() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDownloadFinished() {
+        progressBar.setVisibility(View.GONE);
     }
 }

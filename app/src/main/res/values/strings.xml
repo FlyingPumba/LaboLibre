@@ -15,6 +15,16 @@
     <string name="client_id">749012502551-8466730mihilmlr6hosf4p3ah46r168a.apps.googleusercontent.com</string>
     <string name="client_secret">{"installed":{"auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","client_email":"","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","oob"],"client_x509_cert_url":"","client_id":"749012502551-8466730mihilmlr6hosf4p3ah46r168a.apps.googleusercontent.com","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs"}}</string>
 
+    <string-array name="calendar_ids">
+        <item>string/labo1_cid</item>
+        <item>string/labo2_cid</item>
+        <item>string/labo3_cid</item>
+        <item>string/labo4_cid</item>
+        <item>string/labo5_cid</item>
+        <item>string/labo6_cid</item>
+        <item>string/laboTuring_cid</item>
+    </string-array>
+
     <string name="labo1_cid">dbmc63l0l8e3ga4o0gnv4774co@group.calendar.google.com</string>
     <string name="labo2_cid">lvi87p49t3v40rog28inb0rqv4@group.calendar.google.com</string>
     <string name="labo3_cid">uv7ipmm1plrko1s079qeq94rt8@group.calendar.google.com</string>
@@ -22,6 +32,16 @@
     <string name="labo5_cid">r011hms61uo5rdnpu17lcg4gss@group.calendar.google.com</string>
     <string name="labo6_cid">1v8th9oib37s7hfnghop6vqmgg@group.calendar.google.com</string>
     <string name="laboTuring_cid">oi16fo4digt6aqlr9dc9415bc8@group.calendar.google.com</string>
+
+    <string-array name="calendar_names">
+        <item>string/labo1_name</item>
+        <item>string/labo2_name</item>
+        <item>string/labo3_name</item>
+        <item>string/labo4_name</item>
+        <item>string/labo5_name</item>
+        <item>string/labo6_name</item>
+        <item>string/laboTuring_name</item>
+    </string-array>
 
     <string name="labo1_name">Labo 1</string>
     <string name="labo2_name">Labo 2</string>

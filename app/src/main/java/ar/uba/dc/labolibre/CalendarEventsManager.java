@@ -4,20 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
@@ -26,9 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
-public class CalendarEventsManager implements GoogleCalendarAuthorizator.AuthorizationListener, CalendarEventsFetcher.NewEventsListener {
+public class CalendarEventsManager implements GoogleCalendarAuthorizator.AuthorizationListener, CalendarEventsFetcher.EventsFetcherListener {
 
     private List<String> monthEventsBeingFetched = new ArrayList<>();
     private List<String> cids;
@@ -36,16 +26,15 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     private List<Integer> ccolors;
 
     AppCompatActivity activity;
-    CalendarEventsFetcher.NewEventsListener listener;
+    EventsManagerListener listener;
 
     GoogleCalendarAuthorizator authorizator;
     boolean authorizating = false;
     CalendarEventsFetcher fetcher;
-    boolean fetching = false;
 
     Calendar timePending = null;
 
-    public CalendarEventsManager(AppCompatActivity activity, CalendarEventsFetcher.NewEventsListener listener) {
+    public CalendarEventsManager(AppCompatActivity activity, EventsManagerListener listener) {
         this.activity = activity;
         this.listener = listener;
         this.authorizator = new GoogleCalendarAuthorizator(activity, this);
@@ -105,48 +94,38 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             }
         } else {
             if (isDeviceOnline()) {
-                // check if we are not already fetching that month
-                if (!monthEventsBeingFetched.contains(calendarTime2ColumnName(time))) {
-                    // store current month as being fetched
-                    monthEventsBeingFetched.add(calendarTime2ColumnName(time));
-                    fetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
-                }
+                // store current month as being fetched
+                monthEventsBeingFetched.add(calendarTime2ColumnName(time));
+                fetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
+                listener.onDownloadStarted();
             } else {
                 // yield: no connection
+                Toast.makeText(activity, "No connection available", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void initCalendarsInfo() {
         // prepare calendar ids
+        String[] aux_ids = activity.getResources().getStringArray(R.array.calendar_ids);
         cids = new ArrayList<String>();
-        cids.add(activity.getResources().getString(R.string.labo1_cid));
-        cids.add(activity.getResources().getString(R.string.labo2_cid));
-        cids.add(activity.getResources().getString(R.string.labo3_cid));
-        cids.add(activity.getResources().getString(R.string.labo4_cid));
-        cids.add(activity.getResources().getString(R.string.labo5_cid));
-        cids.add(activity.getResources().getString(R.string.labo6_cid));
-        cids.add(activity.getResources().getString(R.string.laboTuring_cid));
+        for (int i = 0; i < aux_ids.length; i++) {
+            cids.add(aux_ids[i]);
+        }
 
         // prepare calendar names
+        String[] aux_names = activity.getResources().getStringArray(R.array.calendar_ids);
         cnames = new ArrayList<String>();
-        cnames.add(activity.getResources().getString(R.string.labo1_name));
-        cnames.add(activity.getResources().getString(R.string.labo2_name));
-        cnames.add(activity.getResources().getString(R.string.labo3_name));
-        cnames.add(activity.getResources().getString(R.string.labo4_name));
-        cnames.add(activity.getResources().getString(R.string.labo5_name));
-        cnames.add(activity.getResources().getString(R.string.labo6_name));
-        cnames.add(activity.getResources().getString(R.string.laboTuring_name));
+        for (int i = 0; i < aux_names.length; i++) {
+            cids.add(aux_names[i]);
+        }
 
         // prepare calendar colors
+        int[] aux_colors = activity.getResources().getIntArray(R.array.calendar_colors);
         ccolors = new ArrayList<Integer>();
-        ccolors.add(activity.getResources().getColor(R.color.md_light_blue_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_red_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_light_green_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_amber_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_purple_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_pink_400));
-        ccolors.add(activity.getResources().getColor(R.color.md_indigo_400));
+        for (int i = 0; i < aux_colors.length; i++) {
+            ccolors.add(aux_colors[i]);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -198,6 +177,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             if(monthEventsBeingFetched.contains(monthAndYear2ColumnName(m, y))) {
                 monthEventsBeingFetched.remove(monthAndYear2ColumnName(m, y));
             }
+            listener.onDownloadFinished();
             listener.onNewEvents(events);
         } catch (SnappydbException e) {
             Log.d(this.getClass().getName(), e.toString());
@@ -210,5 +190,11 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
 
     private String monthAndYear2ColumnName(int m, int y) {
         return "" + m + y;
+    }
+
+    public interface EventsManagerListener {
+        void onNewEvents(List<WeekViewEvent> events);
+        void onDownloadStarted();
+        void onDownloadFinished();
     }
 }

@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseListener {
 
-    private NewEventsListener listener;
+    private EventsFetcherListener listener;
     private List<String> calendarNames;
 
     /**
@@ -33,7 +33,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     private List<Integer> calendarColors;
 
-    public CalendarEventsFetcher(@NonNull NewEventsListener listener, GoogleAccountCredential credential) {
+    public CalendarEventsFetcher(@NonNull EventsFetcherListener listener, GoogleAccountCredential credential) {
         this.listener = listener;
         mService = new com.google.api.services.calendar.Calendar.Builder(
                 transport, jsonFactory, credential)
@@ -88,7 +88,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
         }).run();
     }
 
-    public interface NewEventsListener {
+    public interface EventsFetcherListener {
         void onNewEvents(List<WeekViewEvent> events);
     }
 }

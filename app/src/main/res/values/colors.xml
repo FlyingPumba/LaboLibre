@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="calendar_colors">
+        <item>@color/labo1_color</item>
+        <item>@color/labo2_color</item>
+        <item>@color/labo3_color</item>
+        <item>@color/labo4_color</item>
+        <item>@color/labo5_color</item>
+        <item>@color/labo6_color</item>
+        <item>@color/laboTuring_color</item>
+    </integer-array>
+
+    <color name="labo1_color">@color/md_light_blue_400</color>
+    <color name="labo2_color">@color/md_red_400</color>
+    <color name="labo3_color">@color/md_light_green_400</color>
+    <color name="labo4_color">@color/md_amber_400</color>
+    <color name="labo5_color">@color/md_purple_400</color>
+    <color name="labo6_color">@color/md_pink_400</color>
+    <color name="laboTuring_color">@color/md_indigo_400</color>
+</resources>
