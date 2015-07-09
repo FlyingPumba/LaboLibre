@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
@@ -42,36 +43,19 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     CalendarEventsFetcher fetcher;
     boolean fetching = false;
 
+    Calendar timePending = null;
+
     public CalendarEventsManager(AppCompatActivity activity, CalendarEventsFetcher.NewEventsListener listener) {
         this.activity = activity;
         this.listener = listener;
         this.authorizator = new GoogleCalendarAuthorizator(activity, this);
         this.fetcher = new CalendarEventsFetcher(this, authorizator.getCredential());
 
-        authorizator.requestAuthorization();
-
         // prepare calendars info
         initCalendarsInfo();
     }
 
-    private void populateEvents(Calendar time) {
-        Calendar endTime = Calendar.getInstance();
-        endTime.setTime(time.getTime());
-
-        // compute endTime (one month)
-        if (time.get(Calendar.MONTH) == Calendar.DECEMBER) {
-            endTime.set(Calendar.MONTH, Calendar.JANUARY);
-            endTime.set(Calendar.YEAR, time.get(Calendar.YEAR) + 1);
-        } else {
-            endTime.set(Calendar.MONTH, time.get(Calendar.MONTH) + 1);
-        }
-        endTime.getTime(); // needed to repopulate values
-
-        // fetch !
-
-    }
-
-    public ArrayList<WeekViewEvent> getEventsByMonth(Calendar time) {
+    public List<WeekViewEvent> getEventsByMonth(Calendar time) {
         // check if they are in the DB
         WeekViewEvent[] fromDB = getFromDB(time);
         if (fromDB == null || fromDB.length == 0) {
@@ -79,7 +63,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             getFromInternet(time);
             return new ArrayList<WeekViewEvent>();
         } else {
-            return (ArrayList<WeekViewEvent>)Arrays.asList(fromDB);
+            return Arrays.asList(fromDB);
         }
     }
 
@@ -90,8 +74,8 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             WeekViewEvent [] events = snappydb.getObjectArray(calendarTime2ColumnName(time), WeekViewEvent.class);
             snappydb.close();
             return events;
-
         } catch (SnappydbException e) {
+            Log.d(this.getClass().getName(), e.toString());
             return null;
         }
     }
@@ -114,13 +98,19 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         endTime.getTime(); // needed to repopulate values
 
         if (!authorizator.hasValidCredential()) {
-            authorizator.requestAuthorization();
+            if (!authorizating) {
+                authorizating = true;
+                timePending = time;
+                authorizator.requestAuthorization();
+            }
         } else {
             if (isDeviceOnline()) {
-                // store current month as being fetched
-                monthEventsBeingFetched.add(calendarTime2ColumnName(time));
-                fetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
-                fetching = true;
+                // check if we are not already fetching that month
+                if (!monthEventsBeingFetched.contains(calendarTime2ColumnName(time))) {
+                    // store current month as being fetched
+                    monthEventsBeingFetched.add(calendarTime2ColumnName(time));
+                    fetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
+                }
             } else {
                 // yield: no connection
             }
@@ -177,12 +167,17 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
 
     @Override
     public void onValidAuthorizationObtained() {
-
+        authorizating = false;
+        if (timePending != null) {
+            List<WeekViewEvent> events = getEventsByMonth(timePending);
+            if (!events.isEmpty()) {
+                listener.onNewEvents(events);
+            }
+        }
     }
 
     @Override
     public void onNewEvents(List<WeekViewEvent> events) {
-        fetching = false;
         if (events.size() == 0) {
             return;
         }
@@ -192,29 +187,20 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             //create or open an existing databse using the default name
             DB snappydb = DBFactory.open(activity);
 
-            // all this events belong to one month, check first if we have an entry for this month
+            // all this events belong to one month
             WeekViewEvent e = events.get(0);
             int m = e.getStartTime().get(Calendar.MONTH);
             int y = e.getStartTime().get(Calendar.YEAR);
+            snappydb.put(monthAndYear2ColumnName(m, y), events.toArray());
 
-            WeekViewEvent [] fromDB = snappydb.getObjectArray(monthAndYear2ColumnName(m, y), WeekViewEvent.class);
-            if (fromDB == null || fromDB.length == 0) {
-                // there was no entry in the DB
-                snappydb.put(monthAndYear2ColumnName(m, y), events.toArray());
-            } else {
-                // add all the stored ones in DB to the new list, and then overwrite
-                for(WeekViewEvent event : fromDB) {
-                    events.add(event);
-                }
-                snappydb.put(monthAndYear2ColumnName(m, y), events.toArray());
-            }
             snappydb.close();
             // remove entry from beingFetched
             if(monthEventsBeingFetched.contains(monthAndYear2ColumnName(m, y))) {
                 monthEventsBeingFetched.remove(monthAndYear2ColumnName(m, y));
             }
+            listener.onNewEvents(events);
         } catch (SnappydbException e) {
-
+            Log.d(this.getClass().getName(), e.toString());
         }
     }
 

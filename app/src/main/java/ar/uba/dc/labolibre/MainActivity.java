@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity
     private CharSequence mTitle;
 
     private WeekView mCalendarView;
-    private boolean calendarEventsOutdated = true;
 
     Calendar currentMonthTime;
     CalendarEventsManager eventsManager;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity
 
         initViews();
 
-        populateViews();
+        populateInitialEvents(currentMonthTime);
     }
 
     private void calculateCurrentMonth() {
@@ -71,14 +70,6 @@ public class MainActivity extends AppCompatActivity
         Calendar aux = Calendar.getInstance();
         mCalendarView.goToHour(aux.get(Calendar.HOUR_OF_DAY));
     }
-
-    private void populateViews() {
-
-
-        // Populate initial 3 months
-        populateInitialEvents(currentMonthTime);
-    }
-
 
     private void populateInitialEvents(Calendar time) {
         // fetch events for this month, the previous one and the next one
@@ -174,10 +165,7 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (calendarEventsOutdated) {
-                    mCalendarView.notifyDatasetChanged();
-                    calendarEventsOutdated = false;
-                }
+                mCalendarView.notifyDatasetChanged();
             }
         });
     }

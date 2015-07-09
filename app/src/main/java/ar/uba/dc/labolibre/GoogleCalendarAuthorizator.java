@@ -50,7 +50,7 @@ public class GoogleCalendarAuthorizator {
     }
 
     public boolean hasValidCredential() {
-        return credential.getSelectedAccountName() == null;
+        return credential.getSelectedAccountName() != null;
     }
 
     public GoogleAccountCredential getCredential() {
