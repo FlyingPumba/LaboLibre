@@ -32,13 +32,15 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     boolean authorizating = false;
     CalendarEventsFetcher fetcher;
 
-    Calendar timePending = null;
+    List<Calendar> timePending;
 
     public CalendarEventsManager(AppCompatActivity activity, EventsManagerListener listener) {
         this.activity = activity;
         this.listener = listener;
         this.authorizator = new GoogleCalendarAuthorizator(activity, this);
         this.fetcher = new CalendarEventsFetcher(this, authorizator.getCredential());
+
+        timePending = new ArrayList<Calendar>();
 
         // prepare calendars info
         initCalendarsInfo();
@@ -89,7 +91,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         if (!authorizator.hasValidCredential()) {
             if (!authorizating) {
                 authorizating = true;
-                timePending = time;
+                timePending.add(time);
                 authorizator.requestAuthorization();
             }
         } else {
@@ -114,10 +116,10 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         }
 
         // prepare calendar names
-        String[] aux_names = activity.getResources().getStringArray(R.array.calendar_ids);
+        String[] aux_names = activity.getResources().getStringArray(R.array.calendar_names);
         cnames = new ArrayList<String>();
         for (int i = 0; i < aux_names.length; i++) {
-            cids.add(aux_names[i]);
+            cnames.add(aux_names[i]);
         }
 
         // prepare calendar colors
@@ -147,40 +149,42 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     @Override
     public void onValidAuthorizationObtained() {
         authorizating = false;
-        if (timePending != null) {
-            List<WeekViewEvent> events = getEventsByMonth(timePending);
-            if (!events.isEmpty()) {
-                listener.onNewEvents(events);
+        if (!timePending.isEmpty()) {
+            for(Calendar time : timePending) {
+                List<WeekViewEvent> events = getEventsByMonth(time);
+                if (!events.isEmpty()) {
+                    listener.onNewEvents();
+                }
             }
+            timePending.clear();
         }
     }
 
     @Override
-    public void onNewEvents(List<WeekViewEvent> events) {
-        if (events.size() == 0) {
-            return;
-        }
-
+    public void onEventsFetchFinished(Calendar time, List<WeekViewEvent> events) {
+        String key = calendarTime2ColumnName(time);
         // once fetched, store them in the DB
         try {
-            //create or open an existing databse using the default name
-            DB snappydb = DBFactory.open(activity);
+            if (events.size() != 0) {
+                //create or open an existing databse using the default name
+                DB snappydb = DBFactory.open(activity);
 
-            // all this events belong to one month
-            WeekViewEvent e = events.get(0);
-            int m = e.getStartTime().get(Calendar.MONTH);
-            int y = e.getStartTime().get(Calendar.YEAR);
-            snappydb.put(monthAndYear2ColumnName(m, y), events.toArray());
+                // all this events belong to one month
+                snappydb.put(key, events.toArray());
 
-            snappydb.close();
-            // remove entry from beingFetched
-            if(monthEventsBeingFetched.contains(monthAndYear2ColumnName(m, y))) {
-                monthEventsBeingFetched.remove(monthAndYear2ColumnName(m, y));
+                snappydb.close();
+
+                listener.onNewEvents();
             }
-            listener.onDownloadFinished();
-            listener.onNewEvents(events);
         } catch (SnappydbException e) {
             Log.d(this.getClass().getName(), e.toString());
+        }
+        // remove entry from beingFetched
+        if(monthEventsBeingFetched.contains(key)) {
+            monthEventsBeingFetched.remove(key);
+        }
+        if (monthEventsBeingFetched.isEmpty()) {
+            listener.onDownloadFinished();
         }
     }
 
@@ -193,7 +197,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     }
 
     public interface EventsManagerListener {
-        void onNewEvents(List<WeekViewEvent> events);
+        void onNewEvents();
         void onDownloadStarted();
         void onDownloadFinished();
     }

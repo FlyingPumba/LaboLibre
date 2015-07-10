@@ -18,7 +18,7 @@ import java.util.List;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsFetcher.EventsFetcherListener, CalendarEventsManager.EventsManagerListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsManager.EventsManagerListener {
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewEvents(final List<WeekViewEvent> events) {
+    public void onNewEvents() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

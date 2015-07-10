@@ -21,6 +21,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
 
     private EventsFetcherListener listener;
     private List<String> calendarNames;
+    private List<Integer> calendarColors;
 
     /**
      * A Calendar service object used to query or modify calendars via the
@@ -31,7 +32,6 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
 
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-    private List<Integer> calendarColors;
 
     public CalendarEventsFetcher(@NonNull EventsFetcherListener listener, GoogleAccountCredential credential) {
         this.listener = listener;
@@ -59,7 +59,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
     }
 
     @Override
-    public void onFetchFinished(final List<Events> events) {
+    public void onFetchFinished(final DateTime timeRequest, final List<Events> events) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -83,12 +83,15 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                         aux.add(event);
                     }
                 }
-                listener.onNewEvents(aux);
+
+                Calendar time = Calendar.getInstance();
+                time.setTimeInMillis(timeRequest.getValue());
+                listener.onEventsFetchFinished(time, aux);
             }
         }).run();
     }
 
     public interface EventsFetcherListener {
-        void onNewEvents(List<WeekViewEvent> events);
+        void onEventsFetchFinished(Calendar time, List<WeekViewEvent> events);
     }
 }

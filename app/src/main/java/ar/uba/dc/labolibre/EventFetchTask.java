@@ -18,6 +18,7 @@ import java.util.List;
 public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void, List<Events>> {
     private EventFetchResponseListener mListener;
     private Calendar mService;
+    private DateTime timeRequest;
 
     EventFetchTask(Calendar service, @NonNull EventFetchResponseListener listener) {
         this.mService = service;
@@ -26,21 +27,23 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
 
     @Override
     protected List<Events> doInBackground(EventRequest... params) {
+        timeRequest = params[0].startTime;
+
         List<Events> events = new ArrayList<Events>();
-            for (EventRequest r : params) {
-                try {
-                    events.add(getEventsFromCalendar(r.calendarID, r.startTime, r.endTime));
-                } catch (IOException e) {
-                    // do nothing
-                }
+        for (EventRequest r : params) {
+            try {
+                events.add(getEventsFromCalendar(r.calendarID, r.startTime, r.endTime));
+            } catch (IOException e) {
+                // do nothing
             }
+        }
 
         return events;
     }
 
     @Override
     protected void onPostExecute(List<Events> events) {
-        mListener.onFetchFinished(events);
+        mListener.onFetchFinished(timeRequest, events);
         super.onPostExecute(events);
     }
 
@@ -69,6 +72,6 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
     }
 
     public interface EventFetchResponseListener {
-        void onFetchFinished(List<Events> events);
+        void onFetchFinished(DateTime timeRequest, List<Events> events);
     }
 }
