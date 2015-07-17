@@ -49,7 +49,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     public List<WeekViewEvent> getEventsByMonth(Calendar time) {
         // check if they are in the DB
         WeekViewEvent[] fromDB = getFromDB(time);
-        if (fromDB == null || fromDB.length == 0) {
+        if (fromDB == null) {
             // if not, try to fetch the from internet
             getFromInternet(time);
             return new ArrayList<WeekViewEvent>();
@@ -165,17 +165,15 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         String key = calendarTime2ColumnName(time);
         // once fetched, store them in the DB
         try {
-            if (events.size() != 0) {
-                //create or open an existing databse using the default name
-                DB snappydb = DBFactory.open(activity);
+            //create or open an existing databse using the default name
+            DB snappydb = DBFactory.open(activity);
 
-                // all this events belong to one month
-                snappydb.put(key, events.toArray());
+            // all this events belong to one month
+            snappydb.put(key, events.toArray());
 
-                snappydb.close();
+            snappydb.close();
 
-                listener.onNewEvents();
-            }
+            listener.onNewEvents();
         } catch (SnappydbException e) {
             Log.d(this.getClass().getName(), e.toString());
         }
