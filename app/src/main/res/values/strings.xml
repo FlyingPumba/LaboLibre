@@ -58,4 +58,5 @@
     <string name="LabelAboutLicense">License</string>
     <string name="LabelGitHub">Code on GitHub</string>
     <string name="ErrorFetchingVersion">Error fetching LaboLibre version</string>
+    <string name="action_invalidate">Invalidate cached events</string>
 </resources>

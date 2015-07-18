@@ -134,6 +134,10 @@ public class MainActivity extends AppCompatActivity
             intent.setAction("com.arcusapp.labolibre.action.ABOUT");
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_invalidate) {
+            eventsManager.invalidateCachedEvents();
+            mCalendarView.notifyDatasetChanged();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

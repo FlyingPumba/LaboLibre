@@ -205,16 +205,27 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         }
     }
 
+    public void setShowingCalendars(List<Integer> selectedItems) {
+        showing = selectedItems;
+    }
+
+    public void invalidateCachedEvents() {
+        try {
+            DB snappydb = DBFactory.open(activity);
+            // delete all DB
+            snappydb.destroy();
+            snappydb.close();
+        } catch (SnappydbException e) {
+            Log.d(this.getClass().getName(), e.toString());
+        }
+    }
+
     private String calendarTime2ColumnName(Calendar time) {
         return monthAndYear2ColumnName(time.get(Calendar.MONTH), time.get(Calendar.YEAR));
     }
 
     private String monthAndYear2ColumnName(int m, int y) {
         return "" + m + y;
-    }
-
-    public void setShowingCalendars(List<Integer> selectedItems) {
-        showing = selectedItems;
     }
 
     public interface EventsManagerListener {
