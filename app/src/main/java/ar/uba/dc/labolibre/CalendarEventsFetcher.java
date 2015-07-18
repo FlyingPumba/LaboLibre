@@ -67,7 +67,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                 Random rnd = new Random(42);
                 for (int i = 0; i < events.size(); i++) {
                     Events es = events.get(i);
-                    String name = CalendarEventsFetcher.this.calendarNames.get(i);
+//                    String name = CalendarEventsFetcher.this.calendarNames.get(i);
                     Integer color = CalendarEventsFetcher.this.calendarColors.get(i);
                     for (Event e : es.getItems()) {
                         Calendar start = Calendar.getInstance();

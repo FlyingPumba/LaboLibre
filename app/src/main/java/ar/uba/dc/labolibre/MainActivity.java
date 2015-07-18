@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity
         currentMonthTime.clear();
         currentMonthTime.set(aux.get(Calendar.YEAR), aux.get(Calendar.MONTH), 1);
         currentMonthTime.getTime(); // needed to repopulate values
-
     }
 
     private void initHelpers() {
@@ -76,6 +75,8 @@ public class MainActivity extends AppCompatActivity
         // focus current hour
         Calendar aux = Calendar.getInstance();
         mCalendarView.goToHour(aux.get(Calendar.HOUR_OF_DAY));
+
+        eventsManager.setShowingCalendars(mNavigationDrawerFragment.getSelectedItems());
     }
 
     private void populateInitialEvents(Calendar time) {
@@ -119,11 +120,6 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         eventsManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onNavigationDrawerItemChecked(int position, boolean checked) {
-        // refresh event list
     }
 
     public void restoreActionBar() {
@@ -185,5 +181,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDownloadFinished() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSelectedItemsChanged(List<Integer> positions) {
+        eventsManager.setShowingCalendars(positions);
+        mCalendarView.notifyDatasetChanged();
     }
 }

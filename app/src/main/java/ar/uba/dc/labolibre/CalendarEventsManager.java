@@ -24,6 +24,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     private List<String> cids;
     private List<String> cnames;
     private List<Integer> ccolors;
+    private List<Integer> showing;
 
     AppCompatActivity activity;
     EventsManagerListener listener;
@@ -54,7 +55,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             getFromInternet(time);
             return new ArrayList<WeekViewEvent>();
         } else {
-            return Arrays.asList(fromDB);
+            return filterShowingCalendars(Arrays.asList(fromDB));
         }
     }
 
@@ -107,12 +108,28 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         }
     }
 
+    private List<WeekViewEvent> filterShowingCalendars(List<WeekViewEvent> weekViewEvents) {
+        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        for (WeekViewEvent e :weekViewEvents) {
+            if (showing.contains(getCalendarIndex(e))) {
+                events.add(e);
+            }
+        }
+        return events;
+    }
+
+    private Integer getCalendarIndex(WeekViewEvent e) {
+        return ccolors.indexOf(e.getColor());
+    }
+
     private void initCalendarsInfo() {
         // prepare calendar ids
         String[] aux_ids = activity.getResources().getStringArray(R.array.calendar_ids);
         cids = new ArrayList<String>();
+        showing = new ArrayList<Integer>();
         for (int i = 0; i < aux_ids.length; i++) {
             cids.add(aux_ids[i]);
+            showing.add(i);
         }
 
         // prepare calendar names
@@ -192,6 +209,10 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
 
     private String monthAndYear2ColumnName(int m, int y) {
         return "" + m + y;
+    }
+
+    public void setShowingCalendars(List<Integer> selectedItems) {
+        showing = selectedItems;
     }
 
     public interface EventsManagerListener {

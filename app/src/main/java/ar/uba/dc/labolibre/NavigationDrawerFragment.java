@@ -1,10 +1,8 @@
 package ar.uba.dc.labolibre;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -32,12 +33,6 @@ public class NavigationDrawerFragment extends Fragment {
      * Remember the position of the selected item.
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
-    /**
-     * Per the design guidelines, you should show the drawer on launch until the user manually
-     * expands it. This shared preference tracks this.
-     */
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
     /**
      * A pointer to the current callbacks instance (the Activity).
@@ -53,7 +48,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
-    private int mCurrentSelectedPosition = 0;
+    private List<Integer> currentSelectedPositions;
 
     public NavigationDrawerFragment() {
     }
@@ -63,11 +58,11 @@ public class NavigationDrawerFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+            currentSelectedPositions = savedInstanceState.getIntegerArrayList(STATE_SELECTED_POSITION);
         }
 
-        // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        selectItems(currentSelectedPositions, true);
+
     }
 
     @Override
@@ -85,19 +80,25 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+                CheckedTextView v = (CheckedTextView) view;
+                selectItem(position, v.isChecked());
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+
+        mDrawerListView.setAdapter(new CustomAdapter(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+                R.layout.list_item,
+                android.R.id.text1));
+
+        if (currentSelectedPositions == null) {
+            currentSelectedPositions = new ArrayList<Integer>();
+            // select all of them
+            for (int i = 0; i < mDrawerListView.getCount(); ++i) {
+                currentSelectedPositions.add(i);
+                mDrawerListView.setItemChecked(i, true);
+            }
+        }
+
         return mDrawerListView;
     }
 
@@ -162,16 +163,40 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
+    private void selectItems(List<Integer> positions, boolean checked) {
+        if (positions ==  null) {
+            return;
         }
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        for (Integer i : positions) {
+            if (checked) {
+                if (!currentSelectedPositions.contains(i)) {
+                    currentSelectedPositions.add(i);
+                }
+            } else {
+                currentSelectedPositions.remove(currentSelectedPositions.indexOf(i));
+            }
+            if (mDrawerListView != null) {
+                mDrawerListView.setItemChecked(i, checked);
+            }
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemChecked(position, true);
+            mCallbacks.onSelectedItemsChanged(currentSelectedPositions);
+        }
+    }
+
+    private void selectItem(int position, boolean checked) {
+        if (checked) {
+            if (!currentSelectedPositions.contains(position)) {
+                currentSelectedPositions.add(position);
+            }
+        } else {
+            currentSelectedPositions.remove(currentSelectedPositions.indexOf(position));
+        }
+        if (mDrawerListView != null) {
+            mDrawerListView.setItemChecked(position, checked);
+        }
+        if (mCallbacks != null) {
+            mCallbacks.onSelectedItemsChanged(currentSelectedPositions);
         }
     }
 
@@ -193,8 +218,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putIntegerArrayList(STATE_SELECTED_POSITION, (ArrayList<Integer>) currentSelectedPositions);
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override
@@ -237,13 +262,17 @@ public class NavigationDrawerFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
+    public List<Integer> getSelectedItems() {
+        return currentSelectedPositions;
+    }
+
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface NavigationDrawerCallbacks {
+    public interface NavigationDrawerCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemChecked(int position, boolean checked);
+        void onSelectedItemsChanged(List<Integer> positions);
     }
 }
