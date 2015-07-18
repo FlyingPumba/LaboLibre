@@ -9,7 +9,7 @@ import android.widget.CheckedTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.uba.dc.labolibre.R;
+import com.arcusapp.labolibre.R;
 
 public class CustomAdapter extends ArrayAdapter<String> {
 

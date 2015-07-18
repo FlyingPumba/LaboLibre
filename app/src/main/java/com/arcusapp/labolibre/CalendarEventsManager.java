@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import ar.uba.dc.labolibre.R;
+import com.arcusapp.labolibre.R;
 
 public class CalendarEventsManager implements GoogleCalendarAuthorizator.AuthorizationListener, CalendarEventsFetcher.EventsFetcherListener {
 

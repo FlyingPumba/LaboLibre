@@ -22,7 +22,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.uba.dc.labolibre.R;
+import com.arcusapp.labolibre.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
