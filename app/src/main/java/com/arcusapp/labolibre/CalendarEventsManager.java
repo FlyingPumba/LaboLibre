@@ -1,4 +1,4 @@
-package ar.uba.dc.labolibre;
+package com.arcusapp.labolibre;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import ar.uba.dc.labolibre.R;
 
 public class CalendarEventsManager implements GoogleCalendarAuthorizator.AuthorizationListener, CalendarEventsFetcher.EventsFetcherListener {
 

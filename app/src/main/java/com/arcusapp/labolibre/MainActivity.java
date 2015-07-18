@@ -1,4 +1,4 @@
-package ar.uba.dc.labolibre;
+package com.arcusapp.labolibre;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.util.Calendar;
 import java.util.List;
 
+import ar.uba.dc.labolibre.R;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class MainActivity extends AppCompatActivity

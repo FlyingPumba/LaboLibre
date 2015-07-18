@@ -7,9 +7,8 @@ repositories {
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
-        applicationId "ar.uba.dc.labolibre"
+        applicationId 'com.arcusapp.labolibre'
         minSdkVersion 17
         targetSdkVersion 21
         versionCode 1
@@ -20,6 +19,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 

@@ -1,4 +1,4 @@
-package ar.uba.dc.labolibre;
+package com.arcusapp.labolibre;
 
 import android.support.annotation.NonNull;
 

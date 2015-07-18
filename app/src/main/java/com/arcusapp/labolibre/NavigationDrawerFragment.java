@@ -1,4 +1,4 @@
-package ar.uba.dc.labolibre;
+package com.arcusapp.labolibre;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -21,6 +21,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ar.uba.dc.labolibre.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

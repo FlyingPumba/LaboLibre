@@ -1,4 +1,4 @@
-package ar.uba.dc.labolibre;
+package com.arcusapp.labolibre;
 
 import android.content.Context;
 import android.view.View;
@@ -8,6 +8,8 @@ import android.widget.CheckedTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ar.uba.dc.labolibre.R;
 
 public class CustomAdapter extends ArrayAdapter<String> {
 
