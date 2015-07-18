@@ -16,6 +16,9 @@ import java.util.List;
  * Placing the API calls in their own task ensures the UI stays responsive.
  */
 public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void, List<Events>> {
+
+    static public String CALENDAR_ID = "calendar_id";
+
     private EventFetchResponseListener mListener;
     private Calendar mService;
     private DateTime timeRequest;
@@ -56,6 +59,7 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
+        events.set(CALENDAR_ID, cid);
         return events;
     }
 

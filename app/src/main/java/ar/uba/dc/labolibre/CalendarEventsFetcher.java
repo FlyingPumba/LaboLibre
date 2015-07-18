@@ -20,6 +20,7 @@ import java.util.Random;
 public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseListener {
 
     private EventsFetcherListener listener;
+    private List<String> calendarIDs;
     private List<String> calendarNames;
     private List<Integer> calendarColors;
 
@@ -29,7 +30,6 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
      * com.google.api.services.calendar.model.Calendar class.
      */
     com.google.api.services.calendar.Calendar mService;
-
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
@@ -42,6 +42,7 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
 
     public void fetchEventsfromCalendars(List<String> calendarIDs, List<String> calendarNames, List<Integer> calendarColors,
                                          Calendar startTime, Calendar endTime) {
+        this.calendarIDs= calendarIDs;
         this.calendarNames = calendarNames;
         this.calendarColors = calendarColors;
         EventFetchTask.EventRequest[] requests = new EventFetchTask.EventRequest[calendarIDs.size()];
@@ -68,7 +69,8 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                 for (int i = 0; i < events.size(); i++) {
                     Events es = events.get(i);
 //                    String name = CalendarEventsFetcher.this.calendarNames.get(i);
-                    Integer color = CalendarEventsFetcher.this.calendarColors.get(i);
+                    String cid = (String) es.get(EventFetchTask.CALENDAR_ID);
+                    Integer color = getColorFromCalendarID(cid);
                     for (Event e : es.getItems()) {
                         Calendar start = Calendar.getInstance();
                         start.setTimeInMillis(e.getStart().getDateTime().getValue());
@@ -89,6 +91,10 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                 listener.onEventsFetchFinished(time, aux);
             }
         }).run();
+    }
+
+    private Integer getColorFromCalendarID(String cid) {
+        return calendarColors.get(calendarIDs.indexOf(cid));
     }
 
     public interface EventsFetcherListener {
