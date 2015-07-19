@@ -59,4 +59,8 @@
     <string name="LabelGitHub">Code on GitHub</string>
     <string name="ErrorFetchingVersion">Error fetching LaboLibre version</string>
     <string name="action_invalidate">Invalidate cached events</string>
+    <string name="action_today">Go to today</string>
+    <string name="action_day_view">Day view</string>
+    <string name="action_three_day_view">3 day view</string>
+    <string name="action_week_view">Week view</string>
 </resources>

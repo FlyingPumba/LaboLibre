@@ -1,5 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_today"
+        android:title="@string/action_today"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/action_day_view"
+            android:title="@string/action_day_view"
+            android:orderInCategory="100"
+            app:showAsAction="never"/>
+        <item android:id="@+id/action_three_day_view"
+            android:title="@string/action_three_day_view"
+            android:orderInCategory="100"
+            android:checked="true"
+            app:showAsAction="never"/>
+    </group>
     <item android:id="@+id/action_invalidate" android:title="@string/action_invalidate"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_about" android:title="@string/action_about"

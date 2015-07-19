@@ -20,6 +20,10 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsManager.EventsManagerListener {
 
+    private static final int TYPE_DAY_VIEW = 1;
+    private static final int TYPE_THREE_DAY_VIEW = 2;
+    private int mWeekViewType = TYPE_THREE_DAY_VIEW;
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private WeekView mCalendarView;
@@ -129,15 +133,43 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_about) {
-            Intent intent = new Intent();
-            intent.setAction("com.arcusapp.labolibre.action.ABOUT");
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.action_invalidate) {
-            eventsManager.invalidateCachedEvents();
-            mCalendarView.notifyDatasetChanged();
-            return true;
+//        setupDateTimeInterpreter(id == R.id.action_week_view);
+        switch (id){
+            case R.id.action_today:
+                mCalendarView.goToToday();
+                return true;
+            case R.id.action_day_view:
+                if (mWeekViewType != TYPE_DAY_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_DAY_VIEW;
+                    Calendar time = mCalendarView.getFirstVisibleDay();
+                    double hour = mCalendarView.getFirstVisibleHour();
+                    mCalendarView.setNumberOfVisibleDays(1);
+                    mCalendarView.goToDate(time);
+                    mCalendarView.goToHour(hour);
+                }
+                return true;
+            case R.id.action_three_day_view:
+                if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_THREE_DAY_VIEW;
+                    Calendar time = mCalendarView.getFirstVisibleDay();
+                    double hour = mCalendarView.getFirstVisibleHour();
+                    mCalendarView.setNumberOfVisibleDays(3);
+                    mCalendarView.goToDate(time);
+                    mCalendarView.goToHour(hour);
+
+                }
+                return true;
+            case R.id.action_invalidate:
+                eventsManager.invalidateCachedEvents();
+                mCalendarView.notifyDatasetChanged();
+                return true;
+            case R.id.action_about:
+                Intent intent = new Intent();
+                intent.setAction("com.arcusapp.labolibre.action.ABOUT");
+                startActivity(intent);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
