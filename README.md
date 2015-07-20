@@ -1,7 +1,7 @@
 # LaboLibre
-ES: Android app con Calendario de reservas de Laboratorios del Departamento de Computación de la FCEyN - UBA
+<b>ES:</b> Android app con Calendario de reservas de Laboratorios del Departamento de Computación de la FCEyN - UBA
 
-EN: Android app with Calendar of Laboratory reservations for the Computer Sciencie Department of FCEyN - UBA
+<b>EN:</b> Android app with Calendar of Laboratory reservations for the Computer Sciencie Department of FCEyN - UBA
 
 Information of reservations are obtained from the <a href="http://www.dc.uba.ar/serv/reserva/laboratorios">official site</a>.
 
@@ -21,10 +21,9 @@ The following librearies are used:
 ##License
 Copyleft (C) 2015 Iván Arcuschin Moreno
 
+```
 LaboLibre is licensed under the GNU General Public License, version 2 or later
-
 LaboLibre is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
-
 LaboLibre is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
 You may obtain a copy of the GNU General Public License at <a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a>
+```
