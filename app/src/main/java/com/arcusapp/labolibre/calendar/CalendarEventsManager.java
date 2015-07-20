@@ -100,7 +100,7 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             if (isDeviceOnline()) {
                 // store current month as being fetched
                 monthEventsBeingFetched.add(calendarTime2ColumnName(time));
-                fetcher.fetchEventsfromCalendars(cids, cnames, ccolors, time, endTime);
+                fetcher.fetchEventsfromCalendars(cids, ccolors, time, endTime);
                 listener.onDownloadStarted();
             } else {
                 // yield: no connection

@@ -23,7 +23,7 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
     private Calendar mService;
     private DateTime timeRequest;
 
-    EventFetchTask(Calendar service, @NonNull EventFetchResponseListener listener) {
+    public EventFetchTask(Calendar service, @NonNull EventFetchResponseListener listener) {
         this.mService = service;
         this.mListener = listener;
     }

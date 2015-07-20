@@ -22,7 +22,6 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
 
     private EventsFetcherListener listener;
     private List<String> calendarIDs;
-    private List<String> calendarNames;
     private List<Integer> calendarColors;
 
     /**
@@ -41,10 +40,9 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                 .build();
     }
 
-    public void fetchEventsfromCalendars(List<String> calendarIDs, List<String> calendarNames, List<Integer> calendarColors,
+    public void fetchEventsfromCalendars(List<String> calendarIDs, List<Integer> calendarColors,
                                          Calendar startTime, Calendar endTime) {
         this.calendarIDs= calendarIDs;
-        this.calendarNames = calendarNames;
         this.calendarColors = calendarColors;
         EventFetchTask.EventRequest[] requests = new EventFetchTask.EventRequest[calendarIDs.size()];
         DateTime start = new DateTime(startTime.getTime());
