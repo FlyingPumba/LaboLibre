@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/LabelAbout">
+    android:title="@string/action_about">
         <Preference
-            android:summary="@string/LabelAboutSelf"
-            android:title="@string/LabelAboutAuthor" />
+            android:summary="@string/self"
+            android:title="@string/author" />
         <Preference
             android:key="version"
-            android:title="@string/LabelAboutVersion" />
+            android:title="@string/version" />
         <Preference
             android:key="open_source"
-            android:title="@string/LabelAboutLicense" />
+            android:title="@string/license" />
         <Preference
             android:key="github"
-            android:title="@string/LabelGitHub"
+            android:title="@string/on_github"
             android:icon="@mipmap/ic_github" />
 </PreferenceScreen>

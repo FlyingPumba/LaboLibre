@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LaboLibre</string>
+    <string name="action_about">Acerca de</string>
+    <string name="action_day_view">Vista por día</string>
+    <string name="action_invalidate">Borrar eventos cacheados</string>
+    <string name="action_three_day_view">Vista 3 días</string>
+    <string name="action_today">Ir a hoy</string>
+    <string name="author">Autor</string>
+    <string name="error_version">Error obteniendo la version de LaboLibre</string>
+    <string name="license">Licencia</string>
+    <string name="on_github">Código en GitHub</string>
+    <string name="version">Versión</string>
+</resources>

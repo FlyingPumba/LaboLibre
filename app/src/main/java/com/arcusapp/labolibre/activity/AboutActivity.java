@@ -35,7 +35,7 @@ public class AboutActivity extends PreferenceActivity {
 //            findPreference("version").setSummary(packageInfo.versionName + " " +packageInfo.versionCode);
             findPreference("version").setSummary(packageInfo.versionName);
         } catch (Exception ex) {
-            Toast.makeText(this, getString(R.string.ErrorFetchingVersion), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_version), Toast.LENGTH_LONG).show();
             findPreference("version").setSummary("?");
         }
     }
@@ -50,7 +50,7 @@ public class AboutActivity extends PreferenceActivity {
                 String html = readRawTextFile(R.raw.license);
                 webView.loadData(html, "text/html; charset=UTF-8", null);
                 AlertDialog licenseDialog = new AlertDialog.Builder(AboutActivity.this)
-                        .setTitle(R.string.LabelAboutLicense)
+                        .setTitle(R.string.license)
                         .setView(webView)
                         .setPositiveButton(android.R.string.ok, null)
                         .create();
