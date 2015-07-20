@@ -1,6 +1,7 @@
 package com.arcusapp.labolibre;
 
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +16,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.arcusapp.labolibre.R;
+import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsManager.EventsManagerListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsManager.EventsManagerListener, WeekView.EventClickListener {
 
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         mCalendarView = (WeekView)findViewById(R.id.calendarView);
         mCalendarView.setMonthChangeListener(this);
+        mCalendarView.setOnEventClickListener(this);
 
         // focus current hour
         Calendar aux = Calendar.getInstance();
@@ -207,5 +212,20 @@ public class MainActivity extends AppCompatActivity
     public void onSelectedItemsChanged(List<Integer> positions) {
         eventsManager.setShowingCalendars(positions);
         mCalendarView.notifyDatasetChanged();
+    }
+
+    @Override
+    public void onEventClick(WeekViewEvent weekViewEvent, RectF rectF) {
+        String calendar = eventsManager.getCalendarNameForEvent(weekViewEvent);
+        String summary = weekViewEvent.getName();
+        NiftyDialogBuilder dialogBuilder=NiftyDialogBuilder.getInstance(this);
+        dialogBuilder
+                .withTitle("Event info")
+                .withMessage(calendar + "\n" + summary)
+                .withDialogColor(weekViewEvent.getColor())
+                .withDuration(150)
+                .isCancelable(true)
+                .isCancelableOnTouchOutside(true)
+                .show();
     }
 }

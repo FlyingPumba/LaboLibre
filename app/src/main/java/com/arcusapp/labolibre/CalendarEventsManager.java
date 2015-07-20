@@ -209,6 +209,10 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         showing = selectedItems;
     }
 
+    public String getCalendarNameForEvent(WeekViewEvent event) {
+        return cnames.get(ccolors.indexOf(event.getColor()));
+    }
+
     public void invalidateCachedEvents() {
         try {
             DB snappydb = DBFactory.open(activity);
