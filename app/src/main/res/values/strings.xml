@@ -2,8 +2,8 @@
     <string name="app_name">LaboLibre</string>
 
     <!-- Accessibility -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <!-- Calendar IDs -->
     <string-array name="calendar_ids">
@@ -54,7 +54,7 @@
     <string name="self" translatable="false">Iván Arcuschin</string>
     <string name="author">Author</string>
     <string name="version">Version</string>
-    <string name="license">License</string>
+    <string name="license">License and libraries</string>
     <string name="on_github">Code on GitHub</string>
     <string name="error_version">Error fetching LaboLibre version</string>
 </resources>

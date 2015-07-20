@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        setupDateTimeInterpreter(id == R.id.action_week_view);
         switch (id){
             case R.id.action_today:
                 mCalendarView.goToToday();

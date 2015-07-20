@@ -8,7 +8,7 @@
     <string name="action_today">Ir a hoy</string>
     <string name="author">Autor</string>
     <string name="error_version">Error obteniendo la version de LaboLibre</string>
-    <string name="license">Licencia</string>
+    <string name="license">Licencia y librerias</string>
     <string name="on_github">Código en GitHub</string>
     <string name="version">Versión</string>
 </resources>
