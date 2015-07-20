@@ -65,7 +65,7 @@ public class AboutActivity extends PreferenceActivity {
 
             @Override
             public boolean onPreferenceClick(final Preference preference) {
-                Uri uri = Uri.parse("http://github.com/FlyingPumba/LaboLibre");
+                Uri uri = Uri.parse(getString(R.string.github_url));
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;

@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity
         String summary = weekViewEvent.getName();
         NiftyDialogBuilder dialogBuilder=NiftyDialogBuilder.getInstance(this);
         dialogBuilder
-                .withTitle("Event info")
+                .withTitle(getString(R.string.events_info))
                 .withMessage(calendar + "\n" + summary)
                 .withDialogColor(weekViewEvent.getColor())
                 .withDuration(150)
