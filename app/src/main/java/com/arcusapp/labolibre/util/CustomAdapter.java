@@ -1,10 +1,12 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.util;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
+
+import com.arcusapp.labolibre.R;
 
 import java.util.ArrayList;
 import java.util.List;

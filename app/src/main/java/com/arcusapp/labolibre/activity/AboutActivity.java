@@ -1,4 +1,4 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import com.arcusapp.labolibre.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;

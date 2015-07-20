@@ -1,4 +1,4 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.calendar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.WeekViewEvent;
+import com.arcusapp.labolibre.R;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;

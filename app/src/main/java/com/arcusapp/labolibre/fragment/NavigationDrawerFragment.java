@@ -1,4 +1,4 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.fragment;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
+
+import com.arcusapp.labolibre.util.CustomAdapter;
+import com.arcusapp.labolibre.R;
 
 import java.util.ArrayList;
 import java.util.List;

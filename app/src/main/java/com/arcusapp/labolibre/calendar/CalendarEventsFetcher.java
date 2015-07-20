@@ -1,8 +1,9 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.calendar;
 
 import android.support.annotation.NonNull;
 
 import com.alamkanak.weekview.WeekViewEvent;
+import com.arcusapp.labolibre.util.EventFetchTask;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;

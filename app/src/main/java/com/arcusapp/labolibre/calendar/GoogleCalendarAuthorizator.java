@@ -1,4 +1,4 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.calendar;
 
 import android.accounts.AccountManager;
 import android.app.Activity;

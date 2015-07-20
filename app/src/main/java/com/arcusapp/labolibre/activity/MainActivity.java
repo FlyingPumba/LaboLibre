@@ -1,4 +1,4 @@
-package com.arcusapp.labolibre;
+package com.arcusapp.labolibre.activity;
 
 import android.content.Intent;
 import android.graphics.RectF;
@@ -11,6 +11,9 @@ import android.view.View;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.arcusapp.labolibre.calendar.CalendarEventsManager;
+import com.arcusapp.labolibre.fragment.NavigationDrawerFragment;
+import com.arcusapp.labolibre.R;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.util.Calendar;
