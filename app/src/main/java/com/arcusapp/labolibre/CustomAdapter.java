@@ -9,8 +9,6 @@ import android.widget.CheckedTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arcusapp.labolibre.R;
-
 public class CustomAdapter extends ArrayAdapter<String> {
 
     private List<String> cnames;

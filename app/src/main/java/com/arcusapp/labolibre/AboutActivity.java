@@ -10,8 +10,6 @@ import android.preference.PreferenceActivity;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.arcusapp.labolibre.R;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

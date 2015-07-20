@@ -11,13 +11,10 @@ import android.view.View;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.util.Calendar;
 import java.util.List;
-
-import com.arcusapp.labolibre.R;
-import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 

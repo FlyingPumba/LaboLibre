@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import com.arcusapp.labolibre.R;
-
 public class CalendarEventsManager implements GoogleCalendarAuthorizator.AuthorizationListener, CalendarEventsFetcher.EventsFetcherListener {
 
     private List<String> monthEventsBeingFetched = new ArrayList<>();

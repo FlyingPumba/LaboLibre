@@ -68,7 +68,6 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                 Random rnd = new Random(42);
                 for (int i = 0; i < events.size(); i++) {
                     Events es = events.get(i);
-//                    String name = CalendarEventsFetcher.this.calendarNames.get(i);
                     String cid = (String) es.get(EventFetchTask.CALENDAR_ID);
                     Integer color = getColorFromCalendarID(cid);
                     for (Event e : es.getItems()) {
@@ -77,7 +76,6 @@ public class CalendarEventsFetcher implements EventFetchTask.EventFetchResponseL
                         Calendar end = Calendar.getInstance();
                         end.setTimeInMillis(e.getEnd().getDateTime().getValue());
 
-                        //String eventName = name + " - " + e.getSummary();
                         String eventName = e.getSummary();
 
                         WeekViewEvent event = new WeekViewEvent(rnd.nextInt(10000), eventName, start, end);
