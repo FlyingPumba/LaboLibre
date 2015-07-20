@@ -26,11 +26,11 @@ public class MainActivity extends AppCompatActivity
 
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
-    private int mWeekViewType = TYPE_THREE_DAY_VIEW;
+    private int weekViewType = TYPE_THREE_DAY_VIEW;
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private NavigationDrawerFragment navigationDrawerFragment;
 
-    private WeekView mCalendarView;
+    private WeekView calendarView;
     private SmoothProgressBar progressBar;
 
     Calendar currentMonthTime;
@@ -64,26 +64,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initViews() {
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        navigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
+        navigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         progressBar = (SmoothProgressBar)findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
 
-        mCalendarView = (WeekView)findViewById(R.id.calendarView);
-        mCalendarView.setMonthChangeListener(this);
-        mCalendarView.setOnEventClickListener(this);
+        calendarView = (WeekView)findViewById(R.id.calendarView);
+        calendarView.setMonthChangeListener(this);
+        calendarView.setOnEventClickListener(this);
 
         // focus current hour
         Calendar aux = Calendar.getInstance();
-        mCalendarView.goToHour(aux.get(Calendar.HOUR_OF_DAY));
+        calendarView.goToHour(aux.get(Calendar.HOUR_OF_DAY));
 
-        eventsManager.setShowingCalendars(mNavigationDrawerFragment.getSelectedItems());
+        eventsManager.setShowingCalendars(navigationDrawerFragment.getSelectedItems());
     }
 
     private void populateInitialEvents(Calendar time) {
@@ -140,34 +140,34 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id){
             case R.id.action_today:
-                mCalendarView.goToToday();
+                calendarView.goToToday();
                 return true;
             case R.id.action_day_view:
-                if (mWeekViewType != TYPE_DAY_VIEW) {
+                if (weekViewType != TYPE_DAY_VIEW) {
                     item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_DAY_VIEW;
-                    Calendar time = mCalendarView.getFirstVisibleDay();
-                    double hour = mCalendarView.getFirstVisibleHour();
-                    mCalendarView.setNumberOfVisibleDays(1);
-                    mCalendarView.goToDate(time);
-                    mCalendarView.goToHour(hour);
+                    weekViewType = TYPE_DAY_VIEW;
+                    Calendar time = calendarView.getFirstVisibleDay();
+                    double hour = calendarView.getFirstVisibleHour();
+                    calendarView.setNumberOfVisibleDays(1);
+                    calendarView.goToDate(time);
+                    calendarView.goToHour(hour);
                 }
                 return true;
             case R.id.action_three_day_view:
-                if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
+                if (weekViewType != TYPE_THREE_DAY_VIEW) {
                     item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_THREE_DAY_VIEW;
-                    Calendar time = mCalendarView.getFirstVisibleDay();
-                    double hour = mCalendarView.getFirstVisibleHour();
-                    mCalendarView.setNumberOfVisibleDays(3);
-                    mCalendarView.goToDate(time);
-                    mCalendarView.goToHour(hour);
+                    weekViewType = TYPE_THREE_DAY_VIEW;
+                    Calendar time = calendarView.getFirstVisibleDay();
+                    double hour = calendarView.getFirstVisibleHour();
+                    calendarView.setNumberOfVisibleDays(3);
+                    calendarView.goToDate(time);
+                    calendarView.goToHour(hour);
 
                 }
                 return true;
             case R.id.action_invalidate:
                 eventsManager.invalidateCachedEvents();
-                mCalendarView.notifyDatasetChanged();
+                calendarView.notifyDatasetChanged();
                 return true;
             case R.id.action_about:
                 Intent intent = new Intent();
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCalendarView.notifyDatasetChanged();
+                calendarView.notifyDatasetChanged();
             }
         });
     }
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSelectedItemsChanged(List<Integer> positions) {
         eventsManager.setShowingCalendars(positions);
-        mCalendarView.notifyDatasetChanged();
+        calendarView.notifyDatasetChanged();
     }
 
     @Override

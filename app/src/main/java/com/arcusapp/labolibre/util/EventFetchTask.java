@@ -19,13 +19,13 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
 
     static public String CALENDAR_ID = "calendar_id";
 
-    private EventFetchResponseListener mListener;
-    private Calendar mService;
+    private EventFetchResponseListener listener;
+    private Calendar calendarService;
     private DateTime timeRequest;
 
     public EventFetchTask(Calendar service, @NonNull EventFetchResponseListener listener) {
-        this.mService = service;
-        this.mListener = listener;
+        this.calendarService = service;
+        this.listener = listener;
     }
 
     @Override
@@ -46,13 +46,13 @@ public class EventFetchTask extends AsyncTask<EventFetchTask.EventRequest, Void,
 
     @Override
     protected void onPostExecute(List<Events> events) {
-        mListener.onFetchFinished(timeRequest, events);
+        listener.onFetchFinished(timeRequest, events);
         super.onPostExecute(events);
     }
 
     private Events getEventsFromCalendar(String cid, DateTime datemin, DateTime datemax) throws IOException  {
         // List the next 20 events from the calendar.
-        Events events = mService.events().list(cid)
+        Events events = calendarService.events().list(cid)
                 .setMaxResults(100)
                 .setTimeMin(datemin)
                 .setTimeMax(datemax)

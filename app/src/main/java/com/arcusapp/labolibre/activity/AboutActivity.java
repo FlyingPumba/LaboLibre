@@ -32,7 +32,6 @@ public class AboutActivity extends PreferenceActivity {
 
         try{
             final PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-//            findPreference("version").setSummary(packageInfo.versionName + " " +packageInfo.versionCode);
             findPreference("version").setSummary(packageInfo.versionName);
         } catch (Exception ex) {
             Toast.makeText(this, getString(R.string.error_version), Toast.LENGTH_LONG).show();

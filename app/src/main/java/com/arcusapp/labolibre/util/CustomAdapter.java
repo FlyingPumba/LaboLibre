@@ -16,7 +16,6 @@ public class CustomAdapter extends ArrayAdapter<String> {
     private List<String> cnames;
     private List<Integer> ccolors;
 
-
     public CustomAdapter(Context context, int resource, int textViewResourceId) {
         super(context, resource, textViewResourceId);
 

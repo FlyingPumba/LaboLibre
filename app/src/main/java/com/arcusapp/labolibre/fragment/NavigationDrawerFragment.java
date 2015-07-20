@@ -38,15 +38,15 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
-    private NavigationDrawerCallbacks mCallbacks;
+    private NavigationDrawerCallbacks callbacks;
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
-    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
 
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerListView;
+    private DrawerLayout drawerLayout;
+    private ListView drawerListView;
 
     private List<Integer> currentSelectedPositions;
 
@@ -75,9 +75,9 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
+        drawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CheckedTextView v = (CheckedTextView) view;
@@ -85,7 +85,7 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mDrawerListView.setAdapter(new CustomAdapter(
+        drawerListView.setAdapter(new CustomAdapter(
                 getActionBar().getThemedContext(),
                 R.layout.list_item,
                 android.R.id.text1));
@@ -93,13 +93,13 @@ public class NavigationDrawerFragment extends Fragment {
         if (currentSelectedPositions == null) {
             currentSelectedPositions = new ArrayList<Integer>();
             // select all of them
-            for (int i = 0; i < mDrawerListView.getCount(); ++i) {
+            for (int i = 0; i < drawerListView.getCount(); ++i) {
                 currentSelectedPositions.add(i);
-                mDrawerListView.setItemChecked(i, true);
+                drawerListView.setItemChecked(i, true);
             }
         }
 
-        return mDrawerListView;
+        return drawerListView;
     }
 
     /**
@@ -109,10 +109,10 @@ public class NavigationDrawerFragment extends Fragment {
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
     public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-        mDrawerLayout = drawerLayout;
+        this.drawerLayout = drawerLayout;
 
         // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
 
         ActionBar actionBar = getActionBar();
@@ -121,9 +121,9 @@ public class NavigationDrawerFragment extends Fragment {
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
-        mDrawerToggle = new ActionBarDrawerToggle(
+        drawerToggle = new ActionBarDrawerToggle(
                 getActivity(),                    /* host Activity */
-                mDrawerLayout,                    /* DrawerLayout object */
+                NavigationDrawerFragment.this.drawerLayout,                    /* DrawerLayout object */
                 R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -148,14 +148,14 @@ public class NavigationDrawerFragment extends Fragment {
         };
 
         // Defer code dependent on restoration of previous instance state.
-        mDrawerLayout.post(new Runnable() {
+        this.drawerLayout.post(new Runnable() {
             @Override
             public void run() {
-                mDrawerToggle.syncState();
+                drawerToggle.syncState();
             }
         });
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        this.drawerLayout.setDrawerListener(drawerToggle);
     }
 
     private void selectItems(List<Integer> positions, boolean checked) {
@@ -170,12 +170,12 @@ public class NavigationDrawerFragment extends Fragment {
             } else {
                 currentSelectedPositions.remove(currentSelectedPositions.indexOf(i));
             }
-            if (mDrawerListView != null) {
-                mDrawerListView.setItemChecked(i, checked);
+            if (drawerListView != null) {
+                drawerListView.setItemChecked(i, checked);
             }
         }
-        if (mCallbacks != null) {
-            mCallbacks.onSelectedItemsChanged(currentSelectedPositions);
+        if (callbacks != null) {
+            callbacks.onSelectedItemsChanged(currentSelectedPositions);
         }
     }
 
@@ -187,11 +187,11 @@ public class NavigationDrawerFragment extends Fragment {
         } else {
             currentSelectedPositions.remove(currentSelectedPositions.indexOf(position));
         }
-        if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, checked);
+        if (drawerListView != null) {
+            drawerListView.setItemChecked(position, checked);
         }
-        if (mCallbacks != null) {
-            mCallbacks.onSelectedItemsChanged(currentSelectedPositions);
+        if (callbacks != null) {
+            callbacks.onSelectedItemsChanged(currentSelectedPositions);
         }
     }
 
@@ -199,7 +199,7 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerCallbacks) activity;
+            callbacks = (NavigationDrawerCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -208,7 +208,7 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
+        callbacks = null;
     }
 
     @Override
@@ -221,12 +221,12 @@ public class NavigationDrawerFragment extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Forward the new configuration the drawer toggle component.
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
     }
 

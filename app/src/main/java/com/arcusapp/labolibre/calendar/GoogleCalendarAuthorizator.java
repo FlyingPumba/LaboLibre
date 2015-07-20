@@ -74,7 +74,7 @@ public class GoogleCalendarAuthorizator {
                         SharedPreferences settings = activity.getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.commit();
+                        editor.apply();
                         // inform listener
                         listener.onValidAuthorizationObtained();
                     }
