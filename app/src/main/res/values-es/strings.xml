@@ -12,4 +12,6 @@
     <string name="on_github">Código en GitHub</string>
     <string name="version">Versión</string>
     <string name="events_info">Información del Evento</string>
+    <string name="action_labo">Encontrar Labo</string>
+    <string name="available_labos">Labos disponibles</string>
 </resources>

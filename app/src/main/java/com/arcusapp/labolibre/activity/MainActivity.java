@@ -17,6 +17,7 @@ import com.arcusapp.labolibre.R;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -139,6 +140,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id){
+            case R.id.action_labo:
+                showAvailableLabos();
             case R.id.action_today:
                 calendarView.goToToday();
                 return true;
@@ -179,12 +182,82 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void showAvailableLabos() {
+        // fetch daily events
+        Calendar todayTime = Calendar.getInstance();
+        todayTime.set(Calendar.HOUR_OF_DAY, 0);
+        todayTime.set(Calendar.MINUTE, 0);
+        todayTime.set(Calendar.SECOND, 0);
+        todayTime.getTime();
+        List<WeekViewEvent> dailyEvents = eventsManager.filterShowingCalendars(eventsManager.getEventsByDay(todayTime));
+
+        // check start time of daily events to see which labos are available
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.getTime();
+        Calendar closingTime = Calendar.getInstance();
+        closingTime.set(Calendar.HOUR_OF_DAY, 22);
+        closingTime.set(Calendar.MINUTE, 0);
+        closingTime.set(Calendar.SECOND, 0);
+        closingTime.getTime();
+        List<String> cNames = eventsManager.getShowingCalendarNames();
+        boolean availables[] = new boolean[cNames.size()];
+        Date until[] = new Date[cNames.size()];
+        for (int i = 0; i < cNames.size(); i++) {
+            availables[i] = true;
+            until[i] = closingTime.getTime();
+        }
+
+        for (WeekViewEvent e : dailyEvents) {
+            if (e.getStartTime().before(nowTime) && e.getEndTime().after(nowTime)) {
+                // this labo is busy right now
+                String labo = eventsManager.getCalendarNameForEvent(e);
+                availables[cNames.indexOf(labo)] = false;
+            } else if (e.getStartTime().after(nowTime)) {
+                // we found an available labo with an event coming later
+                String labo = eventsManager.getCalendarNameForEvent(e);
+                int index = cNames.indexOf(labo);
+                Date startTime = e.getStartTime().getTime();
+                if (until[index].after(startTime)) {
+                    // update until[index]
+                    until[index] = startTime;
+                }
+            }
+        }
+        // build up message
+        String message = "";
+        for (int i = 0; i < cNames.size(); i++) {
+            if (!availables[i]) {
+                message += cNames.get(i) + " not available\n";
+            } else {
+                Calendar aux = Calendar.getInstance();
+                aux.setTime(until[i]);
+                if (aux.get(Calendar.HOUR_OF_DAY) > 22 || aux.get(Calendar.HOUR_OF_DAY) == 22 && aux.get(Calendar.MINUTE) > 0) {
+                    message += cNames.get(i) + " available until 22:00hs\n";
+                } else {
+                    message += cNames.get(i) + " available until " +
+                            aux.get(Calendar.HOUR_OF_DAY) + ":" + aux.get(Calendar.MINUTE) + "hs\n";
+                }
+            }
+        }
+
+        // show dialog with info
+        NiftyDialogBuilder dialogBuilder=NiftyDialogBuilder.getInstance(this);
+        dialogBuilder
+                .withTitle(getString(R.string.available_labos))
+                .withMessage(message)
+                .withDialogColor(this.getResources().getColor(R.color.md_deep_purple_400))
+                .withDuration(150)
+                .isCancelable(true)
+                .isCancelableOnTouchOutside(true)
+                .show();
+    }
+
     @Override
     public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         Calendar time = Calendar.getInstance();
         time.set(newYear, newMonth, 1);
         time.getTime(); // needed to repopulate values
-        return eventsManager.getEventsByMonth(time);
+        return eventsManager.filterShowingCalendars(eventsManager.getEventsByMonth(time));
     }
 
     @Override

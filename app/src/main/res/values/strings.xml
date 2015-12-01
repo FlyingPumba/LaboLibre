@@ -59,4 +59,6 @@
     <string name="on_github">Code on GitHub</string>
     <string name="error_version">Error fetching LaboLibre version</string>
     <string name="events_info">Event info</string>
+    <string name="action_labo">Find Labo</string>
+    <string name="available_labos">Available Labos</string>
 </resources>

@@ -48,6 +48,25 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         initCalendarsInfo();
     }
 
+    public List<WeekViewEvent> getEventsByDay(Calendar timeDayStart) {
+        Calendar timeDayEnd = Calendar.getInstance();
+        timeDayEnd.setTime(timeDayStart.getTime());
+        timeDayEnd.set(Calendar.HOUR_OF_DAY, 23);
+        timeDayEnd.set(Calendar.MINUTE, 59);
+        timeDayEnd.set(Calendar.SECOND, 59);
+        timeDayEnd.getTime(); // needed to repopulate values
+
+        List<WeekViewEvent> events = getEventsByMonth(timeDayStart);
+        List<WeekViewEvent> dailyEvents = new ArrayList<WeekViewEvent>();
+        for (WeekViewEvent e : events) {
+            if (e.getStartTime().after(timeDayStart) && e.getEndTime().before(timeDayEnd)) {
+                dailyEvents.add(e);
+            }
+        }
+
+        return dailyEvents;
+    }
+
     public List<WeekViewEvent> getEventsByMonth(Calendar time) {
         // check if they are in the DB
         WeekViewEvent[] fromDB = getFromDB(time);
@@ -56,8 +75,12 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
             getFromInternet(time);
             return new ArrayList<WeekViewEvent>();
         } else {
-            return filterShowingCalendars(Arrays.asList(fromDB));
+            return Arrays.asList(fromDB);
         }
+    }
+
+    public List<String> getCalendarNames() {
+        return cnames;
     }
 
     private WeekViewEvent[] getFromDB(Calendar time) {
@@ -109,7 +132,15 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
         }
     }
 
-    private List<WeekViewEvent> filterShowingCalendars(List<WeekViewEvent> weekViewEvents) {
+    public List<String> getShowingCalendarNames() {
+        List<String> names = new ArrayList<String>();
+        for(Integer i : showing) {
+            names.add(cnames.get(i));
+        }
+        return names;
+    }
+
+    public List<WeekViewEvent> filterShowingCalendars(List<WeekViewEvent> weekViewEvents) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
         for (WeekViewEvent e :weekViewEvents) {
             if (showing.contains(getCalendarIndex(e))) {
@@ -151,7 +182,6 @@ public class CalendarEventsManager implements GoogleCalendarAuthorizator.Authori
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         authorizator.onAuthorizationResult(requestCode, resultCode, data);
     }
-
 
     /**
      * Checks whether the device currently has a network connection.
