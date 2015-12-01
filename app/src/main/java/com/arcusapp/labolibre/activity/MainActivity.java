@@ -25,6 +25,8 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, WeekView.MonthChangeListener, CalendarEventsManager.EventsManagerListener, WeekView.EventClickListener {
 
+    private static final String STATE_SELECTED_TYPE_VIEW = "selected_type_view";
+
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private int weekViewType = TYPE_THREE_DAY_VIEW;
@@ -39,16 +41,27 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            weekViewType = savedInstanceState.getInt(STATE_SELECTED_TYPE_VIEW, TYPE_THREE_DAY_VIEW);
+        }
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         calculateCurrentMonth();
 
         initHelpers();
 
+        setContentView(R.layout.activity_main);
+
         initViews();
 
         populateInitialEvents(currentMonthTime);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_SELECTED_TYPE_VIEW, weekViewType);
+        super.onSaveInstanceState(outState);
     }
 
     private void calculateCurrentMonth() {
@@ -83,6 +96,11 @@ public class MainActivity extends AppCompatActivity
         // focus current hour
         Calendar aux = Calendar.getInstance();
         calendarView.goToHour(aux.get(Calendar.HOUR_OF_DAY));
+        if (weekViewType == TYPE_DAY_VIEW) {
+            calendarView.setNumberOfVisibleDays(1);
+        } else {
+            calendarView.setNumberOfVisibleDays(3);
+        }
 
         eventsManager.setShowingCalendars(navigationDrawerFragment.getSelectedItems());
     }
@@ -133,6 +151,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.global, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (weekViewType == TYPE_DAY_VIEW) {
+            menu.findItem(R.id.action_day_view).setChecked(true);
+            menu.findItem(R.id.action_three_day_view).setChecked(false);
+        } else {
+            menu.findItem(R.id.action_day_view).setChecked(false);
+            menu.findItem(R.id.action_three_day_view).setChecked(true);
+        }
         return true;
     }
 
@@ -283,7 +313,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSelectedItemsChanged(List<Integer> positions) {
         eventsManager.setShowingCalendars(positions);
-        calendarView.notifyDatasetChanged();
+        if (calendarView != null) {
+            calendarView.notifyDatasetChanged();
+        }
     }
 
     @Override

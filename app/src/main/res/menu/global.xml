@@ -8,7 +8,7 @@
         android:title="@string/action_today"
         android:orderInCategory="100"
         app:showAsAction="never"/>
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="all">
         <item android:id="@+id/action_day_view"
             android:title="@string/action_day_view"
             android:orderInCategory="100"
@@ -16,7 +16,6 @@
         <item android:id="@+id/action_three_day_view"
             android:title="@string/action_three_day_view"
             android:orderInCategory="100"
-            android:checked="true"
             app:showAsAction="never"/>
     </group>
     <item android:id="@+id/action_invalidate" android:title="@string/action_invalidate"
